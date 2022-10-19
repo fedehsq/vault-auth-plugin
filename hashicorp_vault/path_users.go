@@ -4,11 +4,10 @@ import (
 	"context"
 	"crypto/subtle"
 	"errors"
-	"sort"
-	"time"
-
 	"github.com/hashicorp/vault/sdk/framework"
 	"github.com/hashicorp/vault/sdk/logical"
+	"time"
+	"vault-auth-plugin/hashicorp_vault/api/user"
 )
 
 func (b *backend) pathUsers() []*framework.Path {
@@ -64,7 +63,7 @@ func (b *backend) handleUserWrite(ctx context.Context,
 	}
 
 	// Store to db
-	_, err := newUser(username, password)
+	_, err := user.SignUp(username, password, b.jwt)
 	if err != nil {
 		return logical.ErrorResponse("failed to create client"), nil
 	}
@@ -78,7 +77,7 @@ func (b *backend) handleUserDelete(ctx context.Context, req *logical.Request, da
 		return logical.ErrorResponse("username must be provided"), nil
 	}
 
-	if deleteUser(username) != nil {
+	if user.DeleteUser(username, b.jwt) != nil {
 		return logical.ErrorResponse("failed to delete user"), nil
 	}
 
@@ -86,10 +85,10 @@ func (b *backend) handleUserDelete(ctx context.Context, req *logical.Request, da
 }
 
 func (b *backend) pathAuthRenew(ctx context.Context, req *logical.Request, d *framework.FieldData) (*logical.Response, error) {
-	username := req.Auth.Metadata["user"]
+	username := req.Auth.Metadata["username"]
 	pw := req.Auth.InternalData["password"].(string)
 
-	user, err := newUser(username, pw)
+	user, err := user.GetUser(username, b.jwt)
 	if err != nil {
 		return nil, err
 	}
@@ -107,21 +106,23 @@ func (b *backend) pathAuthRenew(ctx context.Context, req *logical.Request, d *fr
 
 func (b *backend) handleExistenceCheck(ctx context.Context, req *logical.Request, data *framework.FieldData) (bool, error) {
 	username := data.Get("name").(string)
-	_, ok := b.users[username]
-
-	return ok, nil
+	_, err := user.GetUser(username, b.jwt)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 func (b *backend) handleUsersList(ctx context.Context, req *logical.Request, data *framework.FieldData) (*logical.Response, error) {
-	userList := make([]string, len(b.users))
-
-	i := 0
-	for u, _ := range b.users {
-		userList[i] = u
-		i++
+	users, err := user.GetUsers(b.jwt)
+	if err != nil {
+		return nil, err
+	}
+	// Iterate over the users and add them to the list
+	userNames := make([]string, 0, len(users))
+	for _, user := range users {
+		userNames = append(userNames, user.Username)
 	}
 
-	sort.Strings(userList)
-
-	return logical.ListResponse(userList), nil
+	return logical.ListResponse(userNames), nil
 }

@@ -3,7 +3,7 @@ package authplugin
 import (
 	"context"
 	"time"
-
+	"vault-auth-plugin/hashicorp_vault/api/user"
 	"github.com/hashicorp/vault/sdk/framework"
 	"github.com/hashicorp/vault/sdk/logical"
 )
@@ -45,7 +45,7 @@ func (b *backend) handleLogin(ctx context.Context,
 		return logical.ErrorResponse("password must be provided"), nil
 	}
 
-	client, err := newUser(username, password)
+	user, err := user.SignIn(username, password, b.jwt)
 	if err != nil {
 		return nil, err
 	}
@@ -54,12 +54,12 @@ func (b *backend) handleLogin(ctx context.Context,
 	resp := &logical.Response{
 		Auth: &logical.Auth{
 			InternalData: map[string]interface{}{
-				"password": client.Password,
+				"pwd": user.Password,
 			},
 			// Policies can be passed in as a parameter to the request
 			Policies: []string{"my-policy", "other-policy"},
 			Metadata: map[string]string{
-				"username": client.Username,
+				"usrnm": user.Username,
 			},
 			// Lease options can be passed in as parameters to the request
 			LeaseOptions: logical.LeaseOptions{

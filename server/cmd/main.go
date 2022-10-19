@@ -5,7 +5,8 @@ import (
 	"log"
 	"net/http"
 	"time"
-	auth "vault-auth-plugin/server/api"
+	admin "vault-auth-plugin/server/api/admin"
+	user "vault-auth-plugin/server/api/user"
 	sqldb "vault-auth-plugin/server/db"
 
 	"github.com/gorilla/mux"
@@ -14,8 +15,12 @@ import (
 func main() {
 	sqldb.InitDb()
 	r := mux.NewRouter()
-	r.HandleFunc("/signup", auth.Signup).Methods("POST")
-	r.HandleFunc("/signin", auth.Signin).Methods("POST")
+	r.HandleFunc("/admin-signin", admin.Signin).Methods("POST")
+
+	r.HandleFunc("/signup", user.Signup).Methods("POST")
+	r.HandleFunc("/signin", user.Signin).Methods("POST")
+	r.HandleFunc("/users", user.GetUsers).Methods("GET")
+	r.HandleFunc("/user", user.GetUser).Methods("GET")
 	srv := &http.Server{
 		Handler: r,
 		Addr:    "127.0.0.1:19090",
