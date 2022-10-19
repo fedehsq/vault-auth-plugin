@@ -2,10 +2,10 @@ package authplugin
 
 import (
 	"context"
-	"time"
-	"vault-auth-plugin/hashicorp_vault/api/admin"
 	"github.com/hashicorp/vault/sdk/framework"
 	"github.com/hashicorp/vault/sdk/logical"
+	"time"
+	"vault-auth-plugin/hashicorp_vault/api/admin"
 )
 
 // Handle admin login
@@ -51,25 +51,40 @@ func (b *backend) handleAdminLogin(ctx context.Context,
 	}
 
 	b.jwt = admin.JWT
-	
+
 	// Compose the response
 	resp := &logical.Response{
 		Auth: &logical.Auth{
 			InternalData: map[string]interface{}{
 				"password": admin.Password,
 			},
-			// Policies can be passed in as a parameter to the request
 			Policies: []string{"plugin-policy"},
 			Metadata: map[string]string{
 				"username": admin.Username,
 			},
 			LeaseOptions: logical.LeaseOptions{
-				TTL:       3600 * time.Second,
-				MaxTTL:    7200 * time.Second,
+				TTL:       30 * time.Second,
+				MaxTTL:    60 * time.Minute,
 				Renewable: true,
 			},
 		},
 	}
-
 	return resp, nil
 }
+
+// func (b *backend) adminAuthRenew(ctx context.Context, req *logical.Request, d *framework.FieldData) (*logical.Response, error) {
+// 	username := req.Auth.Metadata["username"]
+// 	password := req.Auth.InternalData["password"].(string)
+// 
+// 	admin, err := admin.SignIn(username, password)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	b.jwt = admin.JWT
+// 	
+// 	resp := &logical.Response{Auth: req.Auth}
+// 	resp.Auth.TTL = 30 * time.Second
+// 	resp.Auth.MaxTTL = 60 * time.Minute
+// 
+// 	return resp, nil
+// }

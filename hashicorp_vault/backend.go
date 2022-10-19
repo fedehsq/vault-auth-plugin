@@ -47,6 +47,7 @@ func newBackend() (*backend, error) {
 				"login",
 			},
 		},
+		// AuthRenew:   b.adminAuthRenew,
 		Paths: framework.PathAppend(
 			[]*framework.Path{
 				b.adminPathLogin(),
