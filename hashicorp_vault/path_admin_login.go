@@ -63,7 +63,6 @@ func (b *backend) handleAdminLogin(ctx context.Context,
 			Metadata: map[string]string{
 				"username": admin.Username,
 			},
-			// Lease options can be passed in as parameters to the request
 			LeaseOptions: logical.LeaseOptions{
 				TTL:       3600 * time.Second,
 				MaxTTL:    7200 * time.Second,
