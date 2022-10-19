@@ -59,14 +59,14 @@ func (b *backend) handleAdminLogin(ctx context.Context,
 				"password": admin.Password,
 			},
 			// Policies can be passed in as a parameter to the request
-			Policies: []string{"my-policy", "other-policy"},
+			Policies: []string{"plugin-policy"},
 			Metadata: map[string]string{
 				"username": admin.Username,
 			},
 			// Lease options can be passed in as parameters to the request
 			LeaseOptions: logical.LeaseOptions{
 				TTL:       3600 * time.Second,
-				MaxTTL:    7200 * time.Minute,
+				MaxTTL:    7200 * time.Second,
 				Renewable: true,
 			},
 		},

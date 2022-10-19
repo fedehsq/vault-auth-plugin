@@ -1,6 +1,7 @@
 package userdao
 
 import (
+	"errors"
 	sqldb "vault-auth-plugin/server/db"
 	"vault-auth-plugin/server/models/user"
 )
@@ -24,11 +25,30 @@ func InsertUser(user *user.User) error {
 }
 
 func DeleteUser(username string) error {
-	_, err := sqldb.DB.Exec("DELETE FROM users WHERE username = $1", username)
+	res, err := sqldb.DB.Exec("DELETE FROM users WHERE username = $1", username)
 	if err != nil {
 		return err
 	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return errors.New("user not found")
+	}
 	return nil
+}
+
+func UpdateUser(username string, password string)  (*user.User, error) {
+	_, err := sqldb.DB.Exec("UPDATE users SET password = $1 WHERE username = $2", password, username)
+	if err != nil {
+		return nil, err
+	}
+	user, err := GetUserByUsername(username)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }
 
 func GetUsers() ([]user.User, error) {

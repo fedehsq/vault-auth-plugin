@@ -54,17 +54,17 @@ func (b *backend) handleLogin(ctx context.Context,
 	resp := &logical.Response{
 		Auth: &logical.Auth{
 			InternalData: map[string]interface{}{
-				"pwd": user.Password,
+				"password": user.Password,
 			},
 			// Policies can be passed in as a parameter to the request
-			Policies: []string{"my-policy", "other-policy"},
+			Policies: []string{"ssh-policy"},
 			Metadata: map[string]string{
-				"usrnm": user.Username,
+				"username": user.Username,
 			},
 			// Lease options can be passed in as parameters to the request
 			LeaseOptions: logical.LeaseOptions{
-				TTL:       30 * time.Second,
-				MaxTTL:    60 * time.Minute,
+				TTL:       3600 * time.Second,
+				MaxTTL:    7200 * time.Second,
 				Renewable: true,
 			},
 		},

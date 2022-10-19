@@ -21,6 +21,8 @@ func main() {
 	r.HandleFunc("/signin", user.Signin).Methods("POST")
 	r.HandleFunc("/users", user.GetUsers).Methods("GET")
 	r.HandleFunc("/user", user.GetUser).Methods("GET")
+	r.HandleFunc("/user", user.UpdateUser).Methods("PUT")
+	r.HandleFunc("/user", user.DeleteUser).Methods("DELETE")
 	srv := &http.Server{
 		Handler: r,
 		Addr:    "127.0.0.1:19090",

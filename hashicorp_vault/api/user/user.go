@@ -93,7 +93,7 @@ func GetUsers(jwt string) ([]User, error) {
 }
 
 func GetUser(username string, jwt string) (*User, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/users/%s", host, username), strings.NewReader(string("")))
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/user?username=%s", host, username), strings.NewReader(string("")))
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +110,7 @@ func GetUser(username string, jwt string) (*User, error) {
 }
 
 func DeleteUser(username string, jwt string) error {
-	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/users/%s", host, username), strings.NewReader(string("")))
+	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/user?username=%s", host, username), strings.NewReader(string("")))
 	if err != nil {
 		return err
 	}
@@ -121,10 +121,36 @@ func DeleteUser(username string, jwt string) error {
 	}
 
 	if string(body) != "DELETED" {
-		return errors.New("could not delete user")
+		return errors.New(string(body))
 	}
 
 	return nil
+}
+
+func UpdateUser(username string, password string, jwt string) (*User, error) {
+	rb, err := json.Marshal(map[string]string{
+		"username": username,
+		"password": password,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", fmt.Sprintf("%s/user", host), strings.NewReader(string(rb)))
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := doRequest(req, jwt)
+	if err != nil {
+		return nil, err
+	}
+	user := User{}
+	err = json.Unmarshal(body, &user)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
 }
 
 func doRequest(req *http.Request, jwt string) ([]byte, error) {
