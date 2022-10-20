@@ -2,7 +2,6 @@ package adminapi
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 	admindao "vault-auth-plugin/server/dao/admin"
@@ -17,7 +16,7 @@ func generateJWT() (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["foo"] = "bar"
-	claims["exp"] = time.Now().Add(time.Minute).Unix()
+	claims["exp"] = time.Now().Add(time.Minute * 30).Unix()
 	tokenString, err := token.SignedString(secretKey)
 	if err != nil {
 		return "", err
@@ -65,7 +64,6 @@ func Signin(w http.ResponseWriter, r *http.Request) {
 		Password: user.Password,
 		JWT:      token,
 	}
-	fmt.Println(token)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(admin)

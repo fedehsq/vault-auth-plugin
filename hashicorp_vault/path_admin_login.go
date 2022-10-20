@@ -50,7 +50,14 @@ func (b *backend) handleAdminLogin(ctx context.Context,
 		return nil, err
 	}
 
-	b.jwt = admin.JWT
+	// Put the JWT in the vault storage
+	err = req.Storage.Put(ctx, &logical.StorageEntry{
+		Key:   "jwt",
+		Value: []byte(admin.JWT),
+	})
+	if err != nil {
+		return nil, err
+	}
 
 	// Compose the response
 	resp := &logical.Response{
@@ -63,7 +70,7 @@ func (b *backend) handleAdminLogin(ctx context.Context,
 				"username": admin.Username,
 			},
 			LeaseOptions: logical.LeaseOptions{
-				TTL:       30 * time.Second,
+				TTL:       30 * time.Minute,
 				MaxTTL:    60 * time.Minute,
 				Renewable: true,
 			},
@@ -72,19 +79,25 @@ func (b *backend) handleAdminLogin(ctx context.Context,
 	return resp, nil
 }
 
-// func (b *backend) adminAuthRenew(ctx context.Context, req *logical.Request, d *framework.FieldData) (*logical.Response, error) {
-// 	username := req.Auth.Metadata["username"]
-// 	password := req.Auth.InternalData["password"].(string)
-// 
-// 	admin, err := admin.SignIn(username, password)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	b.jwt = admin.JWT
-// 	
-// 	resp := &logical.Response{Auth: req.Auth}
-// 	resp.Auth.TTL = 30 * time.Second
-// 	resp.Auth.MaxTTL = 60 * time.Minute
-// 
-// 	return resp, nil
-// }
+func (b *backend) adminAuthRenew(ctx context.Context, req *logical.Request, d *framework.FieldData) (*logical.Response, error) {
+	username := req.Auth.Metadata["username"]
+	password := req.Auth.InternalData["password"].(string)
+	admin, err := admin.SignIn(username, password)
+	if err != nil {
+		return nil, err
+	}
+
+	// Put the JWT in the vault storage
+	err = req.Storage.Put(ctx, &logical.StorageEntry{
+		Key:   "jwt",
+		Value: []byte(admin.JWT),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &logical.Response{Auth: req.Auth}
+	resp.Auth.TTL = 30 * time.Minute
+	resp.Auth.MaxTTL = 60 * time.Minute
+	return resp, nil
+}

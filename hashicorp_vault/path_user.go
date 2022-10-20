@@ -55,17 +55,22 @@ func (b *backend) handleUserWrite(ctx context.Context,
 		return logical.ErrorResponse("password must be provided"), nil
 	}
 
+	// Get the JWT from the vault storage
+	JWT, err := getJWT(ctx, req.Storage)
+	if err != nil {
+		return nil, err
+	}
 	// check if the user already exists
-	u, _ := user.GetUser(username, b.jwt)
+	u, _ := user.GetUser(username, JWT)
 	if u != nil {
 		// Update the user
-		_, err := user.UpdateUser(username, password, b.jwt)
+		_, err := user.UpdateUser(username, password, JWT)
 		if err != nil {
 			return logical.ErrorResponse(err.Error()), nil
 		}
 	} else {
 		// Store to db
-		_, err := user.SignUp(username, password, b.jwt)
+		_, err := user.SignUp(username, password, JWT)
 		if err != nil {
 			return logical.ErrorResponse(err.Error()), nil
 		}
@@ -79,7 +84,12 @@ func (b *backend) handleUserDelete(ctx context.Context, req *logical.Request, da
 		return logical.ErrorResponse("username must be provided"), nil
 	}
 
-	err := user.DeleteUser(username, b.jwt)
+	// Get the JWT from the vault storage
+	JWT, err := getJWT(ctx, req.Storage)
+	if err != nil {
+		return nil, err
+	}
+	err = user.DeleteUser(username, JWT)
 	if err != nil {
 		return logical.ErrorResponse(err.Error()), nil
 	}

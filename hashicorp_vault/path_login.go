@@ -2,10 +2,10 @@ package authplugin
 
 import (
 	"context"
-	"time"
-	"vault-auth-plugin/hashicorp_vault/api/user"
 	"github.com/hashicorp/vault/sdk/framework"
 	"github.com/hashicorp/vault/sdk/logical"
+	"time"
+	"vault-auth-plugin/hashicorp_vault/api/user"
 )
 
 // Handle user login
@@ -45,7 +45,12 @@ func (b *backend) handleLogin(ctx context.Context,
 		return logical.ErrorResponse("password must be provided"), nil
 	}
 
-	user, err := user.SignIn(username, password, b.jwt)
+	// Get the JWT from the vault storage
+	JWT, err := getJWT(ctx, req.Storage)
+	if err != nil {
+		return nil, err
+	}
+	user, err := user.SignIn(username, password, JWT)
 	if err != nil {
 		return nil, err
 	}

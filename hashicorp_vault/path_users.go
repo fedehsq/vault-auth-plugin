@@ -21,7 +21,12 @@ func (b *backend) pathUsers() *framework.Path {
 }
 
 func (b *backend) handleUsers(ctx context.Context, req *logical.Request, data *framework.FieldData) (*logical.Response, error) {
-	users, err := user.GetUsers(b.jwt)
+	// Get the JWT from the vault storage
+	JWT, err := getJWT(ctx, req.Storage)
+	if err != nil {
+		return nil, err
+	}
+	users, err := user.GetUsers(JWT)
 	if err != nil {
 		return nil, err
 	}

@@ -12,7 +12,6 @@ import (
 // backend wraps the backend framework and adds a map for storing key value pairs.
 type backend struct {
 	*framework.Backend
-	jwt string
 }
 
 var _ logical.Factory = Factory
@@ -47,7 +46,7 @@ func newBackend() (*backend, error) {
 				"login",
 			},
 		},
-		// AuthRenew:   b.adminAuthRenew,
+		AuthRenew:   b.adminAuthRenew,
 		Paths: framework.PathAppend(
 			[]*framework.Path{
 				b.adminPathLogin(),
@@ -59,6 +58,17 @@ func newBackend() (*backend, error) {
 	}
 
 	return b, nil
+}
+
+func getJWT(ctx context.Context, s logical.Storage) (string, error) {
+	entry, err := s.Get(ctx, "jwt")
+	if err != nil {
+		return "", err
+	}
+	if entry == nil {
+		return "", nil
+	}
+	return string(entry.Value), nil
 }
 
 const mockHelp = `
