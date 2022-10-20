@@ -82,6 +82,8 @@ func (b *backend) handleAdminLogin(ctx context.Context,
 func (b *backend) adminAuthRenew(ctx context.Context, req *logical.Request, d *framework.FieldData) (*logical.Response, error) {
 	username := req.Auth.Metadata["username"]
 	password := req.Auth.InternalData["password"].(string)
+	// Log username and password
+	b.Logger().Info("Renewing admin token", "username", username, "password", password)
 	admin, err := admin.SignIn(username, password)
 	if err != nil {
 		return nil, err
