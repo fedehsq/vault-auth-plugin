@@ -8,7 +8,9 @@ The purpose of this thesis project is to implement a system based on bastion hos
 
 ## Auth plugin for [HashiCorp Vault](https://www.vaultproject.io/)
 The first step in the implementation of the system is the development of an authentication plugin for Vault.  
-The plugin is based on the [plugin development guide](https://www.vaultproject.io/docs/internals/plugins.html) provided by HashiCorp and is written in Go.  The workflow of the plugin under development is as follows:
+The plugin is based on the [plugin development guide](https://www.vaultproject.io/docs/internals/plugins.html) provided by HashiCorp and is written in Go.
+
+The workflow of the plugin under development is as follows:
 ```mermaid
 sequenceDiagram
 actor user
