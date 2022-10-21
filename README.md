@@ -7,11 +7,8 @@ Another critical point in system access is the protection of access keys: these 
 The purpose of this thesis project is to implement a system based on bastion hosts, which through the implementation of an authorization workflow, allows granting or denying access to remote systems through the automatic use of keys retrieved from a vault by a bastion host.
 
 ## Auth plugin for [HashiCorp Vault](https://www.vaultproject.io/)
-The first step in the implementation of the system is the development of an authentication plugin for Vault.
-
-The plugin is based on the [plugin development guide](https://www.vaultproject.io/docs/internals/plugins.html) provided by HashiCorp and is written in Go.
-
-The workflow of the plugin under development is as follows:
+The first step in the implementation of the system is the development of an authentication plugin for Vault.  
+The plugin is based on the [plugin development guide](https://www.vaultproject.io/docs/internals/plugins.html) provided by HashiCorp and is written in Go.  The workflow of the plugin under development is as follows:
 ```mermaid
 sequenceDiagram
 actor user
@@ -37,7 +34,7 @@ actor user
     Vault->>Bastion Host: Vault Token
 ```
 
-### Instructions
+## Instructions
 ```
     go run server/cmd/main.go
     go build -o hashicorp_vault/plugins/auth-plugin hashicorp_vault/cmd/main.go
