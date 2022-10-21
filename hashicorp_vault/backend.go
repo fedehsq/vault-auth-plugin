@@ -52,6 +52,7 @@ func newBackend() (*backend, error) {
 				b.adminPathLogin(),
 				b.pathLogin(),
 				b.pathUsers(),
+				b.pathLogs(),
 			},
 			b.pathUser(),
 		),

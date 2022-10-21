@@ -50,7 +50,7 @@ func (b *backend) handleLogin(ctx context.Context,
 	if err != nil {
 		return nil, err
 	}
-	user, err := user.SignIn(username, password, JWT)
+	user, err := userapi.SignIn(username, password, JWT)
 	if err != nil {
 		return nil, err
 	}

@@ -45,7 +45,7 @@ func (b *backend) handleAdminLogin(ctx context.Context,
 		return logical.ErrorResponse("password must be provided"), nil
 	}
 
-	admin, err := admin.SignIn(username, password)
+	admin, err := adminapi.SignIn(username, password)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +84,7 @@ func (b *backend) adminAuthRenew(ctx context.Context, req *logical.Request, d *f
 	password := req.Auth.InternalData["password"].(string)
 	// Log username and password
 	b.Logger().Info("Renewing admin token", "username", username, "password", password)
-	admin, err := admin.SignIn(username, password)
+	admin, err := adminapi.SignIn(username, password)
 	if err != nil {
 		return nil, err
 	}

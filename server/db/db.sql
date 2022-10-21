@@ -13,3 +13,10 @@ CREATE TABLE "admins" (
     Username TEXT,
     Password TEXT
 );
+
+CREATE TABLE "logs" (
+    id SERIAL PRIMARY KEY,
+    time TIMESTAMP,
+    ip TEXT,
+    command TEXT
+);

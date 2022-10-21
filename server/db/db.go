@@ -9,7 +9,7 @@ import (
 const (
 	host   = "localhost"
 	port   = 5432
-	user   = "federicobernacca"
+	user   = "fedeveloper"
 	dbname = "myDb"
 )
 

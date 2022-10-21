@@ -26,7 +26,7 @@ func (b *backend) handleUsers(ctx context.Context, req *logical.Request, data *f
 	if err != nil {
 		return nil, err
 	}
-	users, err := user.GetUsers(JWT)
+	users, err := userapi.GetUsers(JWT)
 	if err != nil {
 		return nil, err
 	}

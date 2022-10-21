@@ -1,7 +1,45 @@
-# Custom Auth plugin for [HashiCorp Vault](https://www.vaultproject.io/)
+# Implementation of a controlled access system using Bastion Host and Vault
+Increasing automation in IT processes and the evolution of software lifecycle processes from a DevOps perspective have meant that there is less and less need to perform direct access to IT systems: typically, access is for the purpose of performing critical operations and extraordinary maintenance.  
+Access to such systems therefore should be as limited as possible and subject to strict monitoring of the accesses performed.  
+To this end, it is useful to define a single point of access on which to focus security audits: such a system is typically referred to as a bastion host.  
+Another critical point in system access is the protection of access keys: these in the enterprise environment are managed in a wide variety of ways, sometimes without any use of protective measures, others with increasingly sophisticated systems such as vaults or HSMs.
 
-## Instr
+The purpose of this thesis project is to implement a system based on bastion hosts, which through the implementation of an authorization workflow, allows granting or denying access to remote systems through the automatic use of keys retrieved from a vault by a bastion host.
+
+## Auth plugin for [HashiCorp Vault](https://www.vaultproject.io/)
+The first step in the implementation of the system is the development of an authentication plugin for Vault.
+
+The plugin is based on the [plugin development guide](https://www.vaultproject.io/docs/internals/plugins.html) provided by HashiCorp and is written in Go.
+
+The workflow of the plugin under development is as follows:
+```mermaid
+sequenceDiagram
+actor user
+    participant Bastion Host
+    participant Vault
+    participant Vault Server
+    Bastion Host->>Vault: Bastion Host authentication
+    Vault->>Vault Server: Bastion Host Credentials
+    Note over Vault Server: JWT creation to call the other API
+    Vault Server->>Vault: JWT 
+    note over Vault: Vault Token creation with the plug-in policies
+    Vault->>Bastion Host: Vault Token 
+    note over Bastion Host: Authentication using the Vault Token
+    Bastion Host->>Vault: vault login $(vault token)
+    note over Bastion Host: From now any calls to the plugin are authorized
+    user->>Bastion Host: Authentication over Bastion Host
+    Bastion Host->>Vault: User authentication
+    note over Vault: Forward the call to the Vault Server using the JWT saved locally
+    Vault->>Vault Server: User Credentials
+    note over Vault Server: JWT checks
+    Vault Server->>Vault: OK
+    note over Vault: Vault detaches a valid token for the user
+    Vault->>Bastion Host: Vault Token
 ```
+
+### Instructions
+```
+    go run server/cmd/main.go
     go build -o hashicorp_vault/plugins/auth-plugin hashicorp_vault/cmd/main.go
     vault server -dev -dev-root-token-id=root -dev-plugin-dir=./hashicorp_vault/plugins
     export VAULT_ADDR="http://127.0.0.1:8200"

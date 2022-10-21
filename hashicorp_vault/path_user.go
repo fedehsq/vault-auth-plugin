@@ -61,16 +61,16 @@ func (b *backend) handleUserWrite(ctx context.Context,
 		return nil, err
 	}
 	// check if the user already exists
-	u, _ := user.GetUser(username, JWT)
+	u, _ := userapi.GetUser(username, JWT)
 	if u != nil {
 		// Update the user
-		_, err := user.UpdateUser(username, password, JWT)
+		_, err := userapi.UpdateUser(username, password, JWT)
 		if err != nil {
 			return logical.ErrorResponse(err.Error()), nil
 		}
 	} else {
 		// Store to db
-		_, err := user.SignUp(username, password, JWT)
+		_, err := userapi.SignUp(username, password, JWT)
 		if err != nil {
 			return logical.ErrorResponse(err.Error()), nil
 		}
@@ -89,7 +89,7 @@ func (b *backend) handleUserDelete(ctx context.Context, req *logical.Request, da
 	if err != nil {
 		return nil, err
 	}
-	err = user.DeleteUser(username, JWT)
+	err = userapi.DeleteUser(username, JWT)
 	if err != nil {
 		return logical.ErrorResponse(err.Error()), nil
 	}
