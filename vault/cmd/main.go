@@ -1,17 +1,22 @@
 package main
 
 import (
-	"os"
-	pluginBackend "vault-auth-plugin/vault"
-
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/vault/api"
 	"github.com/hashicorp/vault/sdk/plugin"
+	"log"
+	"os"
+	"vault-auth-plugin/config"
+	pluginBackend "vault-auth-plugin/vault"
 )
 
 // Use the Vault SDK's plugin library to start the plugin
 // and communicate with the Vault API.
 func main() {
+	err := config.LoadConfig(".")
+	if err != nil {
+		log.Fatal(err)
+	}
 	apiClientMeta := &api.PluginAPIClientMeta{}
 	flags := apiClientMeta.FlagSet()
 	flags.Parse(os.Args[1:])
@@ -19,7 +24,7 @@ func main() {
 	tlsConfig := apiClientMeta.GetTLSConfig()
 	tlsProviderFunc := api.VaultPluginTLSProvider(tlsConfig)
 
-	err := plugin.Serve(&plugin.ServeOpts{
+	err = plugin.Serve(&plugin.ServeOpts{
 		BackendFactoryFunc: pluginBackend.Factory,
 		TLSProviderFunc:    tlsProviderFunc,
 	})

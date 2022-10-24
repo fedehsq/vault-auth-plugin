@@ -4,17 +4,28 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
-	adminapi "vault-auth-plugin/vault_server/api/admin"
-	logapi "vault-auth-plugin/vault_server/api/log"
-	userapi "vault-auth-plugin/vault_server/api/user"
-	sqldb "vault-auth-plugin/vault_server/db"
+	"vault-auth-plugin/config"
+	"vault-auth-plugin/vault_server/api/admin"
+	"vault-auth-plugin/vault_server/api/log"
+	"vault-auth-plugin/vault_server/api/user"
+	"vault-auth-plugin/vault_server/db"
 
 	"github.com/gorilla/mux"
 )
 
 func main() {
-	sqldb.InitDb()
+	err := config.LoadConfig(".")
+	if err != nil {
+		log.Fatal(err)
+	}
+	sqldb.InitDb(
+		config.Conf.VaultServerDbAddress,
+		config.Conf.VaultServerDbPort,
+		config.Conf.VaultServerDbUser,
+		config.Conf.VaultServerDbName,
+	)
 	r := mux.NewRouter()
 	r.HandleFunc("/logs", logapi.GetAll).Methods("GET")
 	r.HandleFunc("/admin-signin", adminapi.Signin).Methods("POST")
@@ -25,12 +36,11 @@ func main() {
 	r.HandleFunc("/user", userapi.Update).Methods("PUT")
 	r.HandleFunc("/user", userapi.Delete).Methods("DELETE")
 	srv := &http.Server{
-		Handler: r,
-		Addr:    "127.0.0.1:19090",
-		// Good practice: enforce timeouts for servers you create!
+		Handler:      r,
+		Addr:         strings.Replace(config.Conf.VaultServerAddress, "http://", "", 1),
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
-	fmt.Println("Server started at port 19090")
+	fmt.Printf("Vault server started at %s\n", config.Conf.VaultServerAddress)
 	log.Fatal(srv.ListenAndServe())
 }

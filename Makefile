@@ -18,10 +18,9 @@ build:
 	GOOS=$(OS) GOARCH="$(GOARCH)" go build -o vault/plugins/auth-plugin vault/cmd/main.go
 
 start:
-	vault server -dev -dev-root-token-id root -dev-plugin-dir=./vault/plugins -dev-listen-address 192.168.1.3:8200
+	vault server -dev -dev-root-token-id root -dev-plugin-dir=./vault/plugins -dev-listen-address $(shell ipconfig getifaddr en0):8200
 
 vault-setup:
-	export VAULT_ADDR="http://192.168.1.3:8200"
 	vault auth enable -path=auth-plugin auth-plugin
 	vault secrets enable ssh
 	vault write ssh/roles/otp_key_role \

@@ -6,17 +6,10 @@ import (
 	_ "github.com/lib/pq"
 )
 
-const (
-	host   = "localhost"
-	port   = 5432
-	user   = "fedeveloper"
-	dbname = "myDb"
-)
-
 // DB is a global variable to hold db connection
 var DB *sql.DB
 
-func InitDb() {
+func InitDb(host string, port int, user string, dbname string) {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
 		host, port, user, dbname)
 	db, err := sql.Open("postgres", psqlInfo)

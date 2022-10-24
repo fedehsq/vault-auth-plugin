@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"vault-auth-plugin/vault_server/api"
-	userdao "vault-auth-plugin/vault_server/dao/user"
+	"vault-auth-plugin/vault_server/dao/user"
 	"vault-auth-plugin/vault_server/models/user"
 )
 

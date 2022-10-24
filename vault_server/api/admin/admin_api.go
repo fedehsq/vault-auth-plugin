@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"vault-auth-plugin/vault_server/api"
-	admindao "vault-auth-plugin/vault_server/dao/admin"
+	"vault-auth-plugin/vault_server/dao/admin"
 	"vault-auth-plugin/vault_server/models/admin"
 )
 

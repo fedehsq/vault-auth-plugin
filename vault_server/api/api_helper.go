@@ -2,12 +2,11 @@ package api
 
 import (
 	"errors"
+	"github.com/golang-jwt/jwt"
 	"net/http"
 	"time"
-	auditdao "vault-auth-plugin/vault_server/dao/audit"
+	"vault-auth-plugin/vault_server/dao/audit"
 	"vault-auth-plugin/vault_server/models/audit"
-
-	"github.com/golang-jwt/jwt"
 )
 
 var secretKey = []byte("secretKey")

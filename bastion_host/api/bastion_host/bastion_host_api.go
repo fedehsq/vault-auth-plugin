@@ -6,7 +6,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"vault-auth-plugin/bastion_host/api"
+	"vault-auth-plugin/config"
 )
 
 type Token struct {
@@ -30,7 +30,7 @@ func SignIn() (*Token, error) {
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/v1/auth/auth-plugin/admin-login", api.VaultAddress), strings.NewReader(string(rb)))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/v1/auth/auth-plugin/admin-login", config.Conf.VaultAddress), strings.NewReader(string(rb)))
 	if err != nil {
 		return nil, err
 	}
