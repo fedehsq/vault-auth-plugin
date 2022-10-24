@@ -39,6 +39,21 @@ actor user
 
 ### Instructions
 ```
+
+    // Setup the remote host
+    https://learn.hashicorp.com/tutorials/vault/ssh-otp?in=vault/secrets-management
+
+    // If you have already followed the above instructions before, do this:
+    vagrant up
+    vagrant ssh
+    // change the 'vault_addr' variable with the address of your vault server
+    sudo nano /etc/vault-ssh-helper.d/config.hcl
+    sudo systemctl restart sshd
+    // Verify that the configuration is correct
+    vault-ssh-helper -verify-only -dev -config /etc/vault-ssh-helper.d/config.hcl
+    exit
+
+
     // Starts the vault server
     go run vault_server/cmd/main.go
 
@@ -49,6 +64,7 @@ actor user
     make
 
     // setup the vault
+    export VAULT_ADDR="http://192.168.1.3:8200"
     make setup
 
 ```

@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"vault-auth-plugin/vault/api"
 )
 
 type Admin struct {
@@ -13,10 +14,6 @@ type Admin struct {
 	Password string `json:"password"`
 	JWT      string `json:"jwt"`
 }
-
-const (
-	host = "http://localhost:19090"
-)
 
 func SignIn(username string, password string) (*Admin, error) {
 	rb, err := json.Marshal(map[string]string{
@@ -26,7 +23,7 @@ func SignIn(username string, password string) (*Admin, error) {
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/admin-signin", host), strings.NewReader(string(rb)))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/admin-signin", api.VaultServerAddress), strings.NewReader(string(rb)))
 	if err != nil {
 		return nil, err
 	}

@@ -6,12 +6,8 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"vault-auth-plugin/bastion_host/api"
 	bastionhostapi "vault-auth-plugin/bastion_host/api/bastion_host"
-)
-
-const (
-	vaultAddress = "http://127.0.0.1:8200"
-	sshHost      = "192.168.56.10"
 )
 
 type UserRequest struct {
@@ -27,9 +23,9 @@ type UserResponse struct {
 
 type SshOtp struct {
 	Data struct {
-		Key string `json:"key"`
-		Ip string `json:"ip"`
-		Port int `json:"port"`
+		Key      string `json:"key"`
+		Ip       string `json:"ip"`
+		Port     int    `json:"port"`
 		Username string `json:"username"`
 	} `json:"data"`
 }
@@ -40,7 +36,7 @@ func (u *UserRequest) signin(bhToken string, jwt string) (*UserResponse, error) 
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/v1/auth/auth-plugin/user-login", vaultAddress), strings.NewReader(string(rb)))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/v1/auth/auth-plugin/user-login", api.VaultAddress), strings.NewReader(string(rb)))
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +56,7 @@ func (u *UserRequest) signin(bhToken string, jwt string) (*UserResponse, error) 
 }
 
 func (u *UserResponse) getSshOtp() (*SshOtp, error) {
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/v1/ssh/creds/otp_key_role", vaultAddress), strings.NewReader(fmt.Sprintf(`{"ip":"%s"}`, sshHost)))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/v1/ssh/creds/otp_key_role", api.VaultAddress), strings.NewReader(fmt.Sprintf(`{"ip":"%s"}`, api.SshHost)))
 	if err != nil {
 		return nil, err
 	}

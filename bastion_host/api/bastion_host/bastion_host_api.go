@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"vault-auth-plugin/bastion_host/api"
 )
 
 type Token struct {
@@ -21,10 +22,6 @@ func (t *Token) String() string {
 	return fmt.Sprintf("client_token: %s, jwt: %s", t.Auth.ClientToken, t.Auth.Jwt.Token)
 }
 
-const (
-	host = "http://127.0.0.1:8200"
-)
-
 func SignIn() (*Token, error) {
 	rb, err := json.Marshal(map[string]string{
 		"username": "admin",
@@ -33,7 +30,7 @@ func SignIn() (*Token, error) {
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/v1/auth/auth-plugin/admin-login", host), strings.NewReader(string(rb)))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/v1/auth/auth-plugin/admin-login", api.VaultAddress), strings.NewReader(string(rb)))
 	if err != nil {
 		return nil, err
 	}
