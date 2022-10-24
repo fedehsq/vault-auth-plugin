@@ -43,12 +43,21 @@ actor user
 ### Instructions
 >>>>>>> 724dbd9 (logs table created)
 ```
-    go run server/cmd/main.go
-    go build -o hashicorp_vault/plugins/auth-plugin hashicorp_vault/cmd/main.go
-    vault server -dev -dev-root-token-id=root -dev-plugin-dir=./hashicorp_vault/plugins
+    // Starts the vault server
+    go run vault_server/cmd/main.go
+
+    // Starts the bastion host
+    go run bastion_host/cmd/main.go
+
+    // Builds the plugin
+    go build -o vault/plugins/auth-plugin vault/cmd/main.go
+
+    // Starts the plugin
+    vault server -dev -dev-root-token-id=root -dev-plugin-dir=./vault/plugins
+    
     export VAULT_ADDR="http://127.0.0.1:8200"
     vault auth enable -path=auth-plugin auth-plugin
-    vault policy write plugin-policy ./hashicorp_vault/policy.hcl
+    vault policy write plugin-policy ./vault/policy.hcl
     vault write auth/auth-plugin/admin-login username=admin password=admin
     vault login $token
 ```

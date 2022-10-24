@@ -1,0 +1,43 @@
+title Bernacca
+actor user
+actor "Operatore Vault" as operatore
+
+participant "Bastion Host" as bastion
+participant "Vault" as vault
+participant "Vault Server" as server
+database Database
+participant "Target Host" as target
+
+alt Tesi Use Case
+
+note over operatore: Set up del Vault: abilitazione plugin e\nscrittura policies del plugin usando il root token
+operatore -> vault: Inizializzazione Vault
+user -> bastion: Autenticazione sul Bastion Host
+bastion ->vault: Autenticazione Bastion Host
+vault ->server: Credenziali Bastion Host
+server->Database:Credenziali Bastion Host
+server<-Database:OK
+note over server: il server genera un JWT per chiamare tutte le altre funzioni esposte sul server
+server->vault: JWT 
+note over vault: il Vault genera un Vault Token con le policies del plug-in per il Bastion Host\ncon cui ha accesso solo agli altri path del plugin
+
+vault->bastion: Vault Token 
+
+note over bastion: il Bastion Host utilizza il Vault token ed il JWT per autenticare l'utente
+
+
+bastion->vault: Autenticazione utente
+note over vault:Token checks
+vault->server: Credenziali utente
+note over server:JWT checks
+server->Database:Credenziali utente
+
+server<-Database:OK
+server->vault: OK
+
+note over vault: il vault stacca un token valido per l'utente
+
+vault -> bastion:Vault Token
+
+
+end
