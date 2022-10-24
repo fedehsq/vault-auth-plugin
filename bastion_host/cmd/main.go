@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"time"
 	"vault-auth-plugin/bastion_host/api/user"
-	"github.com/gorilla/mux"
 )
 
 func main() {

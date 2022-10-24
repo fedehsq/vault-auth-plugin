@@ -37,11 +37,7 @@ actor user
     Vault->>Bastion Host: Vault Token
 ```
 
-<<<<<<< HEAD
-## Instructions
-=======
 ### Instructions
->>>>>>> 724dbd9 (logs table created)
 ```
     // Starts the vault server
     go run vault_server/cmd/main.go
@@ -49,15 +45,10 @@ actor user
     // Starts the bastion host
     go run bastion_host/cmd/main.go
 
-    // Builds the plugin
-    go build -o vault/plugins/auth-plugin vault/cmd/main.go
+    // Build and starts the vault plugin
+    make
 
-    // Starts the plugin
-    vault server -dev -dev-root-token-id=root -dev-plugin-dir=./vault/plugins
-    
-    export VAULT_ADDR="http://127.0.0.1:8200"
-    vault auth enable -path=auth-plugin auth-plugin
-    vault policy write plugin-policy ./vault/policy.hcl
-    vault write auth/auth-plugin/admin-login username=admin password=admin
-    vault login $token
+    // setup the vault
+    make setup
+
 ```

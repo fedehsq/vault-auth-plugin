@@ -43,10 +43,10 @@ func newBackend() (*backend, error) {
 		PathsSpecial: &logical.Paths{
 			Unauthenticated: []string{
 				"admin-login",
-				"login",
+				"user-login",
 			},
 		},
-		AuthRenew:   b.adminAuthRenew,
+		AuthRenew: b.adminAuthRenew,
 		Paths: framework.PathAppend(
 			[]*framework.Path{
 				b.adminPathLogin(),

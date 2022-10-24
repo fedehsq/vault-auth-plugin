@@ -9,6 +9,11 @@ import (
 	bastionhostapi "vault-auth-plugin/bastion_host/api/bastion_host"
 )
 
+const (
+	vaultAddress = "http://127.0.0.1:8200"
+	sshHost      = "192.168.56.10"
+)
+
 type UserRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
@@ -20,14 +25,61 @@ type UserResponse struct {
 	} `json:"auth"`
 }
 
-const (
-	host = "http://127.0.0.1:8200"
-)
+type SshOtp struct {
+	Data struct {
+		Key string `json:"key"`
+		Ip string `json:"ip"`
+		Port int `json:"port"`
+		Username string `json:"username"`
+	} `json:"data"`
+}
+
+func (u *UserRequest) signin(bhToken string, jwt string) (*UserResponse, error) {
+	// User authentication with vault: as authorizion header pass the vault token and jwt
+	rb, err := json.Marshal(u)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/v1/auth/auth-plugin/user-login", vaultAddress), strings.NewReader(string(rb)))
+	if err != nil {
+		return nil, err
+	}
+	if err != nil {
+		return nil, err
+	}
+	body, err := doRequest(req, bhToken, jwt)
+	if err != nil {
+		return nil, err
+	}
+	user := &UserResponse{}
+	err = json.Unmarshal(body, &user)
+	if err != nil {
+		return nil, err
+	}
+	return user, err
+}
+
+func (u *UserResponse) getSshOtp() (*SshOtp, error) {
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/v1/ssh/creds/otp_key_role", vaultAddress), strings.NewReader(fmt.Sprintf(`{"ip":"%s"}`, sshHost)))
+	if err != nil {
+		return nil, err
+	}
+	body, err := doRequest(req, u.Auth.ClientToken, "")
+	if err != nil {
+		return nil, err
+	}
+	sshOTP := &SshOtp{}
+	err = json.Unmarshal(body, &sshOTP)
+	if err != nil {
+		return nil, err
+	}
+	return sshOTP, err
+}
 
 func Signin(w http.ResponseWriter, r *http.Request) {
 
-	var p UserRequest
-	err := json.NewDecoder(r.Body).Decode(&p)
+	var userReq UserRequest
+	err := json.NewDecoder(r.Body).Decode(&userReq)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -39,36 +91,23 @@ func Signin(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	// User authentication with vault: as authorizion header pass the vault token and jwt
-	rb, err := json.Marshal(p)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/v1/auth/auth-plugin/login", host), strings.NewReader(string(rb)))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	body, err := doRequest(req, bh.Auth.ClientToken, bh.Auth.Jwt.Token)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	user := UserResponse{}
-	err = json.Unmarshal(body, &user)
+
+	// User authentication with vault
+	user, err := userReq.signin(bh.Auth.ClientToken, bh.Auth.Jwt.Token)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
+	// User has now the token to request the SSH OTP: request the SSH OTP
+	sshOtp, err := user.getSshOtp()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(user)
+	json.NewEncoder(w).Encode(sshOtp)
 }
 
 func doRequest(req *http.Request, vaultToken string, JWT string) ([]byte, error) {

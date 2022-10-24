@@ -66,7 +66,7 @@ func (b *backend) handleAdminLogin(ctx context.Context,
 			InternalData: map[string]interface{}{
 				"password": admin.Password,
 			},
-			Policies: []string{"plugin-policy"},
+			Policies: []string{"bh-policy"},
 			Metadata: map[string]string{
 				"jwt": admin.JWT,
 			},
