@@ -73,6 +73,7 @@ func (u *UserResponse) getSshOtp() (*SshOtp, error) {
 }
 
 func Signin(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	var userReq UserRequest
 	err := json.NewDecoder(r.Body).Decode(&userReq)
