@@ -14,13 +14,15 @@ The workflow of the plugin under development is as follows:
 sequenceDiagram
     actor User
     actor Operator
+    participant Sshwifty
     participant Bastion Host
     participant Vault
     participant Vault Server
     participant Target Host
     note over Operator: Vault setup: enable and write plugin policies using root token
     Operator->>Vault: Vault setup
-    User->>Bastion Host: Authentication over Bastion Host
+    User->>Sshwifty: User credentials over Sshwifty
+    Sshwifty->>Bastion Host: User credentials over Bastion Host
     Bastion Host->>Vault: Bastion Host authentication
     Vault->>Vault Server: Bastion Host Credentials
     Note over Vault Server: JWT creation to call the other API
@@ -39,69 +41,79 @@ sequenceDiagram
     Bastion Host->>Vault: Get OTP
     note over Vault:Vault User Token checks
     Vault->>Bastion Host: OTP
-    note over Bastion Host: !!! THE FOLLOWING STEPS MUST BE AUTOMATIZED !!!
-    Bastion Host->>User: OTP
-    User->>Target Host: ssh address OTP
+    Bastion Host->>Sshwifty: OTP
+    Sshwifty->>Target Host: Sshwifty connects user to the Target Host using the OTP!
 
 ```
+
+## Demo
+![](./demo.gif)
 
 ## Instructions
 1. Edit the env file with your own values
 
     ```
-    nano .env
+    $ nano .env
     ```
 
 2. Setup the remote host following the [hashicorp guide for SSH](https://learn.hashicorp.com/tutorials/vault/ssh-otp?in=vault/secrets-management).  
 If you have already followed the above instructions before, do this:
     - Starts vagrant
         ```
-        vagrant up
+        $ vagrant up
         ```
 
     - Connect to the remote host
         ```
-        vagrant ssh
+        $ vagrant ssh
         ```
 
     - Change the 'vault_addr' variable with the address of your vault server
         ```
-        sudo nano /etc/vault-ssh-helper.d/config.hcl
+        $ sudo nano /etc/vault-ssh-helper.d/config.hcl
         ```
 
     - Restart the service
         ```
-        sudo systemctl restart sshd
+        $ sudo systemctl restart sshd
         ```
 
     - Verify that the configuration is correct
 
         ```
-        vault-ssh-helper -verify-only -dev -config /etc/vault-ssh-helper.d/config.hcl
+        $ vault-ssh-helper -verify-only -dev -config /etc/vault-ssh-helper.d/config.hcl
         ```
         
     - Exit from the remote host
         ```
-        exit
+        $ exit
         ```
 
 3. Starts the vault server
     ```
-    go run vault_server/cmd/main.go
+    $ go run vault_server/cmd/main.go
     ```
 
 4. Starts the bastion host
     ```
-    go run bastion_host/cmd/main.go
+    $ go run bastion_host/cmd/main.go
     ```
 
 5. Build and starts the vault plugin
     ```
-    make
+    $ make
     ```
 
 6. Setup the vault and the plugin
     ```
-    export VAULT_ADDR=http://$(ipconfig getifaddr en0):8200
-    make vault-setup
+    $ export VAULT_ADDR=http://$(ipconfig getifaddr en0):8200
+    $ make vault-setup
+    ```
+
+7. (Temporary) Manually change the remote host and bastion host addresses in <b>sshwifty/ui/commands/ssh.js</b> (lines  533, 678, 752)
+    ```
+    $ cd sshwifty/
+    $ npm install
+    $ npm run build
+    $ go run sshwifty.go
     ```
