@@ -1,0 +1,3 @@
+[submodule "sshwifty"]
+	path = sshwifty
+	url = https://github.com/fedehsq/sshwifty
