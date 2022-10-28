@@ -56,7 +56,28 @@ sequenceDiagram
     $ nano .env
     ```
 
-2. Setup the remote host following the [hashicorp guide for SSH](https://learn.hashicorp.com/tutorials/vault/ssh-otp?in=vault/secrets-management).  
+2. Starts the vault server
+    ```
+    $ go run vault_server/cmd/main.go
+    ```
+
+3. Starts the bastion host
+    ```
+    $ go run bastion_host/cmd/main.go
+    ```
+
+4. Build and starts the vault plugin
+    ```
+    $ make
+    ```
+
+5. Setup the vault and the plugin
+    ```
+    $ export VAULT_ADDR=http://$(ipconfig getifaddr en0):8200
+    $ make vault-setup
+    ```
+
+6. Setup the remote host following the [hashicorp guide for SSH](https://learn.hashicorp.com/tutorials/vault/ssh-otp?in=vault/secrets-management).  
 If you have already followed the above instructions before, do this:
     - Starts vagrant
         ```
@@ -88,27 +109,6 @@ If you have already followed the above instructions before, do this:
         ```
         $ exit
         ```
-
-3. Starts the vault server
-    ```
-    $ go run vault_server/cmd/main.go
-    ```
-
-4. Starts the bastion host
-    ```
-    $ go run bastion_host/cmd/main.go
-    ```
-
-5. Build and starts the vault plugin
-    ```
-    $ make
-    ```
-
-6. Setup the vault and the plugin
-    ```
-    $ export VAULT_ADDR=http://$(ipconfig getifaddr en0):8200
-    $ make vault-setup
-    ```
 
 7. (Temporary) Manually change the remote host and bastion host addresses in <b>sshwifty/ui/commands/ssh.js</b> (lines  533, 678, 752)
     ```
