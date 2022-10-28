@@ -47,30 +47,35 @@ sequenceDiagram
 ![](./demo.gif)
 
 ## Instructions
-1. Edit the envs file with your own values
+1. Get the web client Sshwifty
+    ```
+    $ git submodule init
+    $ git submodule update
+    ```
 
+2. Edit the envs file with your own values
     ```
     $ nano .env
     $ nano sshwifty/.env
     ```
 
-2. Starts the vault server
+3. Starts the vault server
     ```
     $ go run vault_server/cmd/main.go
     ```
 
-3. Build and starts the vault plugin
+4. Build and starts the vault plugin
     ```
     $ make
     ```
 
-4. Setup the vault and the plugin
+5. Setup the vault and the plugin
     ```
     $ export VAULT_ADDR=http://$(ipconfig getifaddr en0):8200
     $ make vault-setup
     ```
 
-5. Setup the remote host following the [hashicorp guide for SSH](https://learn.hashicorp.com/tutorials/vault/ssh-otp?in=vault/secrets-management).  
+6. Setup the remote host following the [hashicorp guide for SSH](https://learn.hashicorp.com/tutorials/vault/ssh-otp?in=vault/secrets-management).  
 If you have already followed the above instructions before, do this:
     - Starts vagrant
         ```
@@ -103,7 +108,7 @@ If you have already followed the above instructions before, do this:
         $ exit
         ```
 
-6. Build and starts the web client over the bastion host
+7. Build and starts the web client over the bastion host
     ```
     $ cd sshwifty/
     $ npm install
