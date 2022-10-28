@@ -14,15 +14,13 @@ The workflow of the plugin under development is as follows:
 sequenceDiagram
     actor User
     actor Operator
-    participant Sshwifty
     participant Bastion Host
     participant Vault
     participant Vault Server
     participant Target Host
     note over Operator: Vault setup: enable and write plugin policies using root token
     Operator->>Vault: Vault setup
-    User->>Sshwifty: User credentials over Sshwifty
-    Sshwifty->>Bastion Host: User credentials over Bastion Host
+    User->>Bastion Host: User credentials over Bastion Host via Sshwifty
     Bastion Host->>Vault: Bastion Host authentication
     Vault->>Vault Server: Bastion Host Credentials
     Note over Vault Server: JWT creation to call the other API
@@ -41,8 +39,7 @@ sequenceDiagram
     Bastion Host->>Vault: Get OTP
     note over Vault:Vault User Token checks
     Vault->>Bastion Host: OTP
-    Bastion Host->>Sshwifty: OTP
-    Sshwifty->>Target Host: Sshwifty connects user to the Target Host using the OTP!
+    Bastion Host->>Target Host: Bastion host connects user to the Target Host using the OTP via Sshwifty!
 
 ```
 
@@ -50,10 +47,11 @@ sequenceDiagram
 ![](./demo.gif)
 
 ## Instructions
-1. Edit the env file with your own values
+1. Edit the envs file with your own values
 
     ```
     $ nano .env
+    $ nano sshwifty/.env
     ```
 
 2. Starts the vault server
@@ -61,23 +59,18 @@ sequenceDiagram
     $ go run vault_server/cmd/main.go
     ```
 
-3. Starts the bastion host
-    ```
-    $ go run bastion_host/cmd/main.go
-    ```
-
-4. Build and starts the vault plugin
+3. Build and starts the vault plugin
     ```
     $ make
     ```
 
-5. Setup the vault and the plugin
+4. Setup the vault and the plugin
     ```
     $ export VAULT_ADDR=http://$(ipconfig getifaddr en0):8200
     $ make vault-setup
     ```
 
-6. Setup the remote host following the [hashicorp guide for SSH](https://learn.hashicorp.com/tutorials/vault/ssh-otp?in=vault/secrets-management).  
+5. Setup the remote host following the [hashicorp guide for SSH](https://learn.hashicorp.com/tutorials/vault/ssh-otp?in=vault/secrets-management).  
 If you have already followed the above instructions before, do this:
     - Starts vagrant
         ```
@@ -110,7 +103,7 @@ If you have already followed the above instructions before, do this:
         $ exit
         ```
 
-7. (Temporary) Manually change the remote host and bastion host addresses in <b>sshwifty/ui/commands/ssh.js</b> (lines  533, 678, 752)
+6. Build and starts the web client over the bastion host
     ```
     $ cd sshwifty/
     $ npm install
