@@ -18,6 +18,10 @@ type UserRequest struct {
 type UserResponse struct {
 	Auth struct {
 		ClientToken string `json:"client_token"`
+		Metadata    struct {
+			Username string `json:"username"`
+			Host     string `json:"host"`
+		} `json:"metadata"`
 	} `json:"auth"`
 }
 
@@ -56,7 +60,7 @@ func (u *UserRequest) signin(bhToken string, jwt string) (*UserResponse, error) 
 }
 
 func (u *UserResponse) getSshOtp() (*SshOtp, error) {
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/v1/ssh/creds/otp_key_role", config.Conf.VaultAddress), strings.NewReader(fmt.Sprintf(`{"ip":"%s"}`, config.Conf.SshHost)))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/v1/ssh/creds/otp_key_role", config.Conf.VaultAddress), strings.NewReader(fmt.Sprintf(`{"ip":"%s"}`, u.Auth.Metadata.Host)))
 	if err != nil {
 		return nil, err
 	}
