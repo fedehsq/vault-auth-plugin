@@ -5,7 +5,7 @@
 *.so
 *.dylib
 .vagrant/
-bh/
+bh
 demo.mov
 # Test binary, built with `go test -c`
 *.test
