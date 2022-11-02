@@ -22,6 +22,7 @@ start:
 
 vault-setup:
 	vault auth enable -path=auth-plugin auth-plugin
+	vault kv put -mount=secret bastion username=admin password=admin
 	vault secrets enable ssh
 	vault write ssh/roles/otp_key_role \
     key_type=otp \
@@ -29,6 +30,7 @@ vault-setup:
     cidr_list=0.0.0.0/0
 	vault policy write bh-policy ./vault/bh-policy.hcl
 	vault policy write user-policy ./vault/user-policy.hcl
+	vault token create -policy=bh-policy -id=CAESIFf-ixZPKDzG3_rYR8TcfveN-AfG_JSWJKz4itilwfTjGh4KHGh2cy5ZajltYTVwSTlLUXNZWDhjRERjYjRkUHg
 
 clean:
 	rm -f ./vault/plugins/auth-plugin

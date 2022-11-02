@@ -9,3 +9,7 @@ path "auth/auth-plugin/user/*" {
 path "auth/auth-plugin/logs/*" {
     capabilities = ["list"]
 }
+
+path "secret/data/bastion" {
+    capabilities = ["read"]
+}
