@@ -50,7 +50,7 @@ sequenceDiagram
 1. Get the web client Sshwifty
     ```
     $ git submodule init
-    $ git submodule update
+    $ git submodule update --remote
     ```
 
 2. Edit the envs file with your own values
