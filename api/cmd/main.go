@@ -6,11 +6,11 @@ import (
 	"net/http"
 	"strings"
 	"time"
+	adminapi "vault-auth-plugin/api/api/admin"
+	logapi "vault-auth-plugin/api/api/log"
+	userapi "vault-auth-plugin/api/api/user"
+	sqldb "vault-auth-plugin/api/db"
 	"vault-auth-plugin/config"
-	"vault-auth-plugin/vault_server/api/admin"
-	"vault-auth-plugin/vault_server/api/log"
-	"vault-auth-plugin/vault_server/api/user"
-	"vault-auth-plugin/vault_server/db"
 
 	"github.com/gorilla/mux"
 )

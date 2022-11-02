@@ -3,7 +3,6 @@ package authplugin
 import (
 	"context"
 	"time"
-	"vault-auth-plugin/config"
 	userapi "vault-auth-plugin/vault/api/user"
 
 	"github.com/hashicorp/vault/sdk/framework"
@@ -66,8 +65,6 @@ func (b *backend) handleLogin(ctx context.Context,
 			Policies: []string{"user-policy"},
 			Metadata: map[string]string{
 				"username": user.Username,
-				// The vault chooses the ssh host!
-				"host": config.Conf.SshHost,
 			},
 			LeaseOptions: logical.LeaseOptions{
 				TTL:       60 * time.Minute,

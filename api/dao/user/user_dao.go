@@ -2,8 +2,8 @@ package userdao
 
 import (
 	"errors"
-	sqldb "vault-auth-plugin/vault_server/db"
-	"vault-auth-plugin/vault_server/models/user"
+	sqldb "vault-auth-plugin/api/db"
+	"vault-auth-plugin/api/models/user"
 )
 
 func GetByUsername(username string) (*user.User, error) {

@@ -3,9 +3,9 @@ package adminapi
 import (
 	"encoding/json"
 	"net/http"
-	"vault-auth-plugin/vault_server/api"
-	"vault-auth-plugin/vault_server/dao/admin"
-	"vault-auth-plugin/vault_server/models/admin"
+	"vault-auth-plugin/api/api"
+	admindao "vault-auth-plugin/api/dao/admin"
+	"vault-auth-plugin/api/models/admin"
 )
 
 type Admin struct {

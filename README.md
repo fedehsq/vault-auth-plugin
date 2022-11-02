@@ -16,23 +16,23 @@ sequenceDiagram
     actor Operator
     participant Bastion Host
     participant Vault
-    participant Vault Server
+    participant API
     participant Target Host
     note over Operator: Vault setup: enable and write plugin policies using root token
     Operator->>Vault: Vault setup
     User->>Bastion Host: User credentials over Bastion Host via Sshwifty
     Bastion Host->>Vault: Bastion Host authentication
-    Vault->>Vault Server: Bastion Host Credentials
-    Note over Vault Server: JWT creation to call the other API
-    Vault Server->>Vault: JWT 
+    Vault->>API: Bastion Host Credentials
+    Note over API: JWT creation to call the other API
+    API->>Vault: JWT 
     note over Vault: Vault Token creation with the plug-in policies
     Vault->>Bastion Host: Vault Token 
-    note over Bastion Host: Forwards the user credentials to the Vault Server using the Vault Token and JWT
+    note over Bastion Host: Forwards the user credentials to the API using the Vault Token and JWT
     Bastion Host->>Vault: User Credentials
     note over Vault:Vault Token checks
-    Vault->>Vault Server: User Credentials
-    note over Vault Server: JWT checks
-    Vault Server->>Vault: OK
+    Vault->>API: User Credentials
+    note over API: JWT checks
+    API->>Vault: OK
     note over Vault: Detaches a valid token for the User
     Vault->>Bastion Host: Vault Token
     note over Bastion Host: Uses the user Vault token to request the OTP
@@ -59,9 +59,9 @@ sequenceDiagram
     $ nano sshwifty/.env
     ```
 
-3. Starts the vault server
+3. Starts the API
     ```
-    $ go run vault_server/cmd/main.go
+    $ go run api/cmd/main.go
     ```
 
 4. Build and starts the vault plugin
@@ -87,7 +87,7 @@ If you have already followed the above instructions before, do this:
         $ vagrant ssh
         ```
 
-    - Change the 'vault_addr' variable with the address of your vault server
+    - Change the 'vault_addr' variable with the address of your API
         ```
         $ sudo nano /etc/vault-ssh-helper.d/config.hcl
         ```

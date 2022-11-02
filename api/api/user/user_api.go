@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"vault-auth-plugin/vault_server/api"
-	"vault-auth-plugin/vault_server/dao/user"
-	"vault-auth-plugin/vault_server/models/user"
+	"vault-auth-plugin/api/api"
+	userdao "vault-auth-plugin/api/dao/user"
+	"vault-auth-plugin/api/models/user"
 )
 
 type User struct {

@@ -10,7 +10,6 @@ type Config struct {
 	VaultServerDbUser    string `mapstructure:"VAULT_SERVER_DB_USER"`
 	VaultServerDbName    string `mapstructure:"VAULT_SERVER_DB_NAME"`
 	BastionHostAddress   string `mapstructure:"BASTION_HOST_ADDRESS"`
-	SshHost              string `mapstructure:"SSH_HOST"`
 }
 
 var Conf *Config

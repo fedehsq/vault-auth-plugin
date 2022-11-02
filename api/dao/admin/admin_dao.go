@@ -1,8 +1,8 @@
 package admindao
 
 import (
-	sqldb "vault-auth-plugin/vault_server/db"
-	"vault-auth-plugin/vault_server/models/admin"
+	sqldb "vault-auth-plugin/api/db"
+	"vault-auth-plugin/api/models/admin"
 )
 
 func GetByUsername(username string) (*admin.Admin, error) {

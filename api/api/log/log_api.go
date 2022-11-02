@@ -3,8 +3,8 @@ package logapi
 import (
 	"encoding/json"
 	"net/http"
-	"vault-auth-plugin/vault_server/api"
-	auditdao "vault-auth-plugin/vault_server/dao/audit"
+	"vault-auth-plugin/api/api"
+	auditdao "vault-auth-plugin/api/dao/audit"
 )
 
 func GetAll(w http.ResponseWriter, r *http.Request) {
