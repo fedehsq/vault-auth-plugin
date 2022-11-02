@@ -7,7 +7,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"vault-auth-plugin/config"
+	"vault-auth-plugin/vault/config"
 )
 
 type User struct {
@@ -17,7 +17,6 @@ type User struct {
 
 // JWT of the bastion host (bastion authenticated itself to the vault before)
 func SignIn(username string, password string, jwt string) (*User, error) {
-	fmt.Println("signing in")
 	rb, err := json.Marshal(map[string]string{
 		"username": username,
 		"password": password,
@@ -26,7 +25,7 @@ func SignIn(username string, password string, jwt string) (*User, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/signin", config.Conf.VaultServerAddress), strings.NewReader(string(rb)))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/signin", config.Conf.ApiAddress), strings.NewReader(string(rb)))
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +51,7 @@ func SignUp(username string, password string, jwt string) (*User, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/signup", config.Conf.VaultServerAddress), strings.NewReader(string(rb)))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/signup", config.Conf.ApiAddress), strings.NewReader(string(rb)))
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +69,7 @@ func SignUp(username string, password string, jwt string) (*User, error) {
 }
 
 func GetUsers(jwt string) ([]User, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/users", config.Conf.VaultServerAddress), strings.NewReader(string("")))
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/users", config.Conf.ApiAddress), strings.NewReader(string("")))
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +89,7 @@ func GetUsers(jwt string) ([]User, error) {
 }
 
 func GetUser(username string, jwt string) (*User, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/user?username=%s", config.Conf.VaultServerAddress, username), strings.NewReader(string("")))
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/user?username=%s", config.Conf.ApiAddress, username), strings.NewReader(string("")))
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +106,7 @@ func GetUser(username string, jwt string) (*User, error) {
 }
 
 func DeleteUser(username string, jwt string) error {
-	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/user?username=%s", config.Conf.VaultServerAddress, username), strings.NewReader(string("")))
+	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/user?username=%s", config.Conf.ApiAddress, username), strings.NewReader(string("")))
 	if err != nil {
 		return err
 	}
@@ -133,7 +132,7 @@ func UpdateUser(username string, password string, jwt string) (*User, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("PUT", fmt.Sprintf("%s/user", config.Conf.VaultServerAddress), strings.NewReader(string(rb)))
+	req, err := http.NewRequest("PUT", fmt.Sprintf("%s/user", config.Conf.ApiAddress), strings.NewReader(string(rb)))
 	if err != nil {
 		return nil, err
 	}

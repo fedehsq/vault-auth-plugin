@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 	"time"
-	"vault-auth-plugin/config"
+	"vault-auth-plugin/vault/config"
 )
 
 type Log struct {
@@ -21,7 +21,7 @@ func (l *Log) String() string {
 }
 
 func GetAll(jwt string) ([]Log, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/logs", config.Conf.VaultServerAddress), strings.NewReader(string("")))
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/logs", config.Conf.ApiAddress), strings.NewReader(string("")))
 	if err != nil {
 		return nil, err
 	}

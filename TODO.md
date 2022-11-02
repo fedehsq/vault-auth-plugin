@@ -1,2 +1,0 @@
-Il discorso dello user/password nel .env è un primo passo. Come ti suggerivamo potresti usare il vault per memorizzare queste informazioni. In sostanza inserisci le credenziali sul vault e via API lo invochi per fartele restituire.
-Ovviamente l'API ha senso che sia protetta e che non sia invocabile da tutti i soggetti. Questo significa che in genere i chiamanti hanno una chiave (token) precondivisa da utilizzare per le invocazioni per farsi autorizzare. In sostanza il token andrebbe nel file .env in sostituzione alla copia user/password.

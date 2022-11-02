@@ -6,7 +6,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"vault-auth-plugin/config"
+	"vault-auth-plugin/vault/config"
 )
 
 type Admin struct {
@@ -23,7 +23,7 @@ func SignIn(username string, password string) (*Admin, error) {
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/admin-signin", config.Conf.VaultServerAddress), strings.NewReader(string(rb)))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/admin-signin", config.Conf.ApiAddress), strings.NewReader(string(rb)))
 	if err != nil {
 		return nil, err
 	}

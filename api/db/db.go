@@ -1,4 +1,4 @@
-package sqldb
+package db
 
 import (
 	"database/sql"
@@ -9,14 +9,14 @@ import (
 // DB is a global variable to hold db connection
 var DB *sql.DB
 
-func InitDb(host string, port int, user string, dbname string) {
+func InitDb(host string, port int, user string, dbname string) error {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
 		host, port, user, dbname)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	DB = db
 	fmt.Println("Database connection successful")
-	//defer DB.Close()
+	return nil
 }

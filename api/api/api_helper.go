@@ -1,16 +1,65 @@
 package api
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
 	"net/http"
 	"time"
+	"vault-auth-plugin/api/config"
 	auditdao "vault-auth-plugin/api/dao/audit"
 	"vault-auth-plugin/api/models/audit"
 
 	"github.com/golang-jwt/jwt"
 )
 
-var secretKey = []byte("secretKey")
+type Key struct {
+	Data struct {
+		Data struct {
+			Key string `json:"key"`
+		} `json:"data"`
+	} `json:"data"`
+}
+
+var secretKey []byte
+
+// Get the secret key for generate and check JWT from the vault of the bastion host
+func GetKey(token string) error {
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/v1/secret/data/api", config.Conf.VaultAddress), nil)
+	if err != nil {
+		return err
+	}
+	body, err := doRequest(req, token)
+	if err != nil {
+		return err
+	}
+	key := Key{}
+	err = json.Unmarshal(body, &key)
+	if err != nil {
+		return err
+	}
+	secretKey = []byte(key.Data.Data.Key)
+	return nil
+}
+
+func doRequest(req *http.Request, vaultToken string) ([]byte, error) {
+	req.Header.Set("X-Vault-Token", vaultToken)
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	if res.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status: %d, body: %s", res.StatusCode, body)
+	}
+	return body, err
+}
 
 func VerifyToken(r *http.Request) (bool, error) {
 	if r.Header["Authorization"] != nil {

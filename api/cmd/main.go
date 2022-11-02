@@ -6,26 +6,35 @@ import (
 	"net/http"
 	"strings"
 	"time"
-	adminapi "vault-auth-plugin/api/api/admin"
-	logapi "vault-auth-plugin/api/api/log"
-	userapi "vault-auth-plugin/api/api/user"
-	sqldb "vault-auth-plugin/api/db"
-	"vault-auth-plugin/config"
+	"vault-auth-plugin/api/api"
+	"vault-auth-plugin/api/api/admin"
+	"vault-auth-plugin/api/api/log"
+	"vault-auth-plugin/api/api/user"
+	"vault-auth-plugin/api/config"
+	"vault-auth-plugin/api/db"
 
 	"github.com/gorilla/mux"
 )
 
 func main() {
-	err := config.LoadConfig(".")
+	err := config.LoadConfig("./api")
 	if err != nil {
 		log.Fatal(err)
 	}
-	sqldb.InitDb(
-		config.Conf.VaultServerDbAddress,
-		config.Conf.VaultServerDbPort,
-		config.Conf.VaultServerDbUser,
-		config.Conf.VaultServerDbName,
+	err = db.InitDb(
+		config.Conf.DbAddress,
+		config.Conf.DbPort,
+		config.Conf.DbUser,
+		config.Conf.DbName,
 	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = api.GetKey(config.Conf.VaultToken)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	r := mux.NewRouter()
 	r.HandleFunc("/logs", logapi.GetAll).Methods("GET")
 	r.HandleFunc("/admin-signin", adminapi.Signin).Methods("POST")
@@ -37,10 +46,10 @@ func main() {
 	r.HandleFunc("/user", userapi.Delete).Methods("DELETE")
 	srv := &http.Server{
 		Handler:      r,
-		Addr:         strings.Replace(config.Conf.VaultServerAddress, "http://", "", 1),
+		Addr:         strings.Replace(config.Conf.ApiAddress, "http://", "", 1),
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
-	fmt.Printf("Vault server started at %s\n", config.Conf.VaultServerAddress)
+	fmt.Printf("Vault server started at %s\n", config.Conf.ApiAddress)
 	log.Fatal(srv.ListenAndServe())
 }

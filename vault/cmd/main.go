@@ -6,14 +6,14 @@ import (
 	"github.com/hashicorp/vault/sdk/plugin"
 	"log"
 	"os"
-	"vault-auth-plugin/config"
 	pluginBackend "vault-auth-plugin/vault"
+	"vault-auth-plugin/vault/config"
 )
 
 // Use the Vault SDK's plugin library to start the plugin
 // and communicate with the Vault API.
 func main() {
-	err := config.LoadConfig(".")
+	err := config.LoadConfig("./vault")
 	if err != nil {
 		log.Fatal(err)
 	}

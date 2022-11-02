@@ -55,24 +55,25 @@ sequenceDiagram
 
 2. Edit the envs file with your own values
     ```
-    $ nano .env
+    $ nano api/.env
+    $ nano vault/.env
     $ nano sshwifty/.env
     ```
 
-3. Starts the API
-    ```
-    $ go run api/cmd/main.go
-    ```
-
-4. Build and starts the vault plugin
+3. Build and starts the vault plugin
     ```
     $ make
     ```
 
-5. Setup the vault and the plugin
+4. Setup the vault and the plugin
     ```
     $ export VAULT_ADDR=http://$(ipconfig getifaddr en0):8200
     $ make vault-setup
+    ```
+    
+5. Starts the server API
+    ```
+    $ go run api/cmd/main.go
     ```
 
 6. Setup the remote host following the [hashicorp guide for SSH](https://learn.hashicorp.com/tutorials/vault/ssh-otp?in=vault/secrets-management).  
