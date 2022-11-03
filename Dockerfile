@@ -7,6 +7,7 @@ LABEL maintainer="Federico Bernacca"
 # Install git.
 # Git is required for fetching the dependencies.
 RUN apk update && apk add --no-cache git && apk add --no-cache bash && apk add build-base
+# Install vault
 RUN apk add --no-cache vault libcap
 RUN setcap cap_ipc_lock= /usr/sbin/vault
 
@@ -16,7 +17,7 @@ WORKDIR /app
 
 # Copy the source from the current directory to the working Directory inside the container
 COPY . .
-#COPY .env .
+COPY .env .
 
 # Download all the dependencies
 RUN go get -d -v ./...
@@ -28,7 +29,7 @@ RUN go install -v ./...
 # RUN go build -o /build
 
 # Expose port 8080 to the outside world
-EXPOSE 8080
+#EXPOSE 8080
 
 # Run the commands inside the makefile: make, make vault-setup
 #CMD ["make", "all", "vault-setup"]
