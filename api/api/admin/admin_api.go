@@ -2,10 +2,10 @@ package adminapi
 
 import (
 	"encoding/json"
+	"github.com/fedehsq/vault-auth-plugin/api/api"
+	"github.com/fedehsq/vault-auth-plugin/api/dao/admin"
+	"github.com/fedehsq/vault-auth-plugin/api/models/admin"
 	"net/http"
-	"vault-auth-plugin/api/api"
-	admindao "vault-auth-plugin/api/dao/admin"
-	"vault-auth-plugin/api/models/admin"
 )
 
 type Admin struct {

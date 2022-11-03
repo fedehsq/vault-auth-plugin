@@ -2,9 +2,9 @@ package logapi
 
 import (
 	"encoding/json"
+	"github.com/fedehsq/vault-auth-plugin/api/api"
+	"github.com/fedehsq/vault-auth-plugin/api/dao/audit"
 	"net/http"
-	"vault-auth-plugin/api/api"
-	auditdao "vault-auth-plugin/api/dao/audit"
 )
 
 func GetAll(w http.ResponseWriter, r *http.Request) {

@@ -2,14 +2,14 @@ package userdao
 
 import (
 	"errors"
-	sqldb "vault-auth-plugin/api/db"
-	"vault-auth-plugin/api/models/user"
+	"github.com/fedehsq/vault-auth-plugin/api/db"
+	"github.com/fedehsq/vault-auth-plugin/api/models/user"
 )
 
 func GetByUsername(username string) (*user.User, error) {
 	// Query the database for the user
 	var user user.User
-	err := sqldb.DB.QueryRow("SELECT * FROM users WHERE username = $1", username).Scan(&user.Id, &user.Username, &user.Password)
+	err := db.DB.QueryRow("SELECT * FROM users WHERE username = $1", username).Scan(&user.Id, &user.Username, &user.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -17,7 +17,7 @@ func GetByUsername(username string) (*user.User, error) {
 }
 
 func Insert(user *user.User) error {
-	_, err := sqldb.DB.Exec("INSERT INTO users (username, password) VALUES ($1, $2)", user.Username, user.Password)
+	_, err := db.DB.Exec("INSERT INTO users (username, password) VALUES ($1, $2)", user.Username, user.Password)
 	if err != nil {
 		return err
 	}
@@ -25,7 +25,7 @@ func Insert(user *user.User) error {
 }
 
 func Delete(username string) error {
-	res, err := sqldb.DB.Exec("DELETE FROM users WHERE username = $1", username)
+	res, err := db.DB.Exec("DELETE FROM users WHERE username = $1", username)
 	if err != nil {
 		return err
 	}
@@ -40,7 +40,7 @@ func Delete(username string) error {
 }
 
 func Update(username string, password string) (*user.User, error) {
-	_, err := sqldb.DB.Exec("UPDATE users SET password = $1 WHERE username = $2", password, username)
+	_, err := db.DB.Exec("UPDATE users SET password = $1 WHERE username = $2", password, username)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func Update(username string, password string) (*user.User, error) {
 }
 
 func GetAll() ([]user.User, error) {
-	rows, err := sqldb.DB.Query("SELECT * FROM users")
+	rows, err := db.DB.Query("SELECT * FROM users")
 	if err != nil {
 		return nil, err
 	}

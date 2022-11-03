@@ -3,10 +3,10 @@ package adminapi
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/fedehsq/vault-auth-plugin/vault/config"
 	"io"
 	"net/http"
 	"strings"
-	"vault-auth-plugin/vault/config"
 )
 
 type Admin struct {

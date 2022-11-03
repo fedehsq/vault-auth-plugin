@@ -3,10 +3,10 @@ package userapi
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/fedehsq/vault-auth-plugin/api/api"
+	"github.com/fedehsq/vault-auth-plugin/api/dao/user"
+	"github.com/fedehsq/vault-auth-plugin/api/models/user"
 	"net/http"
-	"vault-auth-plugin/api/api"
-	userdao "vault-auth-plugin/api/dao/user"
-	"vault-auth-plugin/api/models/user"
 )
 
 type User struct {

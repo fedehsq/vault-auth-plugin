@@ -2,11 +2,10 @@ package authplugin
 
 import (
 	"context"
-	"time"
-	userapi "vault-auth-plugin/vault/api/user"
-
+	"github.com/fedehsq/vault-auth-plugin/vault/api/user"
 	"github.com/hashicorp/vault/sdk/framework"
 	"github.com/hashicorp/vault/sdk/logical"
+	"time"
 )
 
 // Handle user login

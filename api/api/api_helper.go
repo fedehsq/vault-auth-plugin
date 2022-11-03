@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/fedehsq/vault-auth-plugin/api/config"
+	"github.com/fedehsq/vault-auth-plugin/api/dao/audit"
+	"github.com/fedehsq/vault-auth-plugin/api/models/audit"
 	"io"
 	"net/http"
 	"time"
-	"vault-auth-plugin/api/config"
-	auditdao "vault-auth-plugin/api/dao/audit"
-	"vault-auth-plugin/api/models/audit"
 
 	"github.com/golang-jwt/jwt"
 )

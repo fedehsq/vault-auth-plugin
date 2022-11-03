@@ -3,11 +3,11 @@ package logapi
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/fedehsq/vault-auth-plugin/vault/config"
 	"io"
 	"net/http"
 	"strings"
 	"time"
-	"vault-auth-plugin/vault/config"
 )
 
 type Log struct {

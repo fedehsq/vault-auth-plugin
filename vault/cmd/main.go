@@ -1,19 +1,19 @@
 package main
 
 import (
+	pluginBackend "github.com/fedehsq/vault-auth-plugin/vault"
+	"github.com/fedehsq/vault-auth-plugin/vault/config"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/vault/api"
 	"github.com/hashicorp/vault/sdk/plugin"
 	"log"
 	"os"
-	pluginBackend "vault-auth-plugin/vault"
-	"vault-auth-plugin/vault/config"
 )
 
 // Use the Vault SDK's plugin library to start the plugin
 // and communicate with the Vault API.
 func main() {
-	err := config.LoadConfig("./vault")
+	err := config.LoadConfig(".")
 	if err != nil {
 		log.Fatal(err)
 	}

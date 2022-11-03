@@ -12,13 +12,13 @@ endif
 
 .DEFAULT_GOAL := all
 
-all: fmt build start
+all: fmt build start vault-setup
 
 build:
 	GOOS=$(OS) GOARCH="$(GOARCH)" go build -o vault/plugins/auth-plugin vault/cmd/main.go
 
 start:
-	vault server -dev -dev-root-token-id root -dev-plugin-dir=./vault/plugins -dev-listen-address $(shell ipconfig getifaddr en0):8200
+	vault server -dev -dev-root-token-id root -dev-plugin-dir=./vault/plugins -dev-listen-address 0.0.0.0:8200
 
 vault-setup:
 	vault auth enable -path=auth-plugin auth-plugin

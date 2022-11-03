@@ -2,22 +2,22 @@ package main
 
 import (
 	"fmt"
+	"github.com/fedehsq/vault-auth-plugin/api/api"
+	"github.com/fedehsq/vault-auth-plugin/api/api/admin"
+	"github.com/fedehsq/vault-auth-plugin/api/api/log"
+	"github.com/fedehsq/vault-auth-plugin/api/api/user"
+	"github.com/fedehsq/vault-auth-plugin/api/config"
+	"github.com/fedehsq/vault-auth-plugin/api/db"
 	"log"
 	"net/http"
 	"strings"
 	"time"
-	"vault-auth-plugin/api/api"
-	"vault-auth-plugin/api/api/admin"
-	"vault-auth-plugin/api/api/log"
-	"vault-auth-plugin/api/api/user"
-	"vault-auth-plugin/api/config"
-	"vault-auth-plugin/api/db"
 
 	"github.com/gorilla/mux"
 )
 
 func main() {
-	err := config.LoadConfig("./api")
+	err := config.LoadConfig(".")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -30,7 +30,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = api.GetKey(config.Conf.VaultToken)
+	err = api.GetKey(config.Conf.ApiVaultToken)
 	if err != nil {
 		log.Fatal(err)
 	}
