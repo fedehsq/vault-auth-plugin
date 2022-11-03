@@ -9,7 +9,8 @@ type Config struct {
 	DbPort        int    `mapstructure:"DB_PORT"`
 	DbUser        string `mapstructure:"DB_USER"`
 	DbName        string `mapstructure:"DB_NAME"`
-	ApiVaultToken string `mapstructure:"API_VAULT_TOKEN"`
+	DbPassword    string `mapstructure:"DB_PASSWORD"`
+	ApiVaultToken string `mapstructure:"VAULT_TOKEN"`
 }
 
 var Conf *Config

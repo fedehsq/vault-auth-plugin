@@ -2,8 +2,8 @@ package auditdao
 
 import (
 	"fmt"
-	"github.com/fedehsq/vault-auth-plugin/api/db"
-	"github.com/fedehsq/vault-auth-plugin/api/models/audit"
+	"github.com/fedehsq/api/db"
+	"github.com/fedehsq/api/models/audit"
 )
 
 func Insert(log *audit.Log) error {

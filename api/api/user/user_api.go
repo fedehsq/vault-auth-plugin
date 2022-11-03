@@ -3,9 +3,9 @@ package userapi
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/fedehsq/vault-auth-plugin/api/api"
-	"github.com/fedehsq/vault-auth-plugin/api/dao/user"
-	"github.com/fedehsq/vault-auth-plugin/api/models/user"
+	"github.com/fedehsq/api/api"
+	"github.com/fedehsq/api/dao/user"
+	"github.com/fedehsq/api/models/user"
 	"net/http"
 )
 

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/fedehsq/vault-auth-plugin/vault/config"
+	"github.com/fedehsq/vault/config"
 	"io"
 	"net/http"
 	"strings"

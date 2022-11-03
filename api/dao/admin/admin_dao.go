@@ -1,8 +1,8 @@
 package admindao
 
 import (
-	"github.com/fedehsq/vault-auth-plugin/api/db"
-	"github.com/fedehsq/vault-auth-plugin/api/models/admin"
+	"github.com/fedehsq/api/db"
+	"github.com/fedehsq/api/models/admin"
 )
 
 func GetByUsername(username string) (*admin.Admin, error) {

@@ -9,9 +9,9 @@ import (
 // DB is a global variable to hold db connection
 var DB *sql.DB
 
-func InitDb(host string, port int, user string, dbname string) error {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
-		host, port, user, dbname)
+func InitDb(host string, port int, user string, dbname string, password string) error {
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
+		host, port, user, dbname, password)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		return err

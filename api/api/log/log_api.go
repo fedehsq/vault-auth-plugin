@@ -2,8 +2,8 @@ package logapi
 
 import (
 	"encoding/json"
-	"github.com/fedehsq/vault-auth-plugin/api/api"
-	"github.com/fedehsq/vault-auth-plugin/api/dao/audit"
+	"github.com/fedehsq/api/api"
+	"github.com/fedehsq/api/dao/audit"
 	"net/http"
 )
 

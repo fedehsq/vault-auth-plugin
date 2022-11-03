@@ -1,8 +1,8 @@
 package main
 
 import (
-	pluginBackend "github.com/fedehsq/vault-auth-plugin/vault"
-	"github.com/fedehsq/vault-auth-plugin/vault/config"
+	pluginBackend "github.com/fedehsq/vault"
+	"github.com/fedehsq/vault/config"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/vault/api"
 	"github.com/hashicorp/vault/sdk/plugin"

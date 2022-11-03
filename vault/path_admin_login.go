@@ -2,7 +2,7 @@ package authplugin
 
 import (
 	"context"
-	"github.com/fedehsq/vault-auth-plugin/vault/api/admin"
+	"github.com/fedehsq/vault/api/admin"
 	"github.com/hashicorp/vault/sdk/framework"
 	"github.com/hashicorp/vault/sdk/logical"
 	"time"

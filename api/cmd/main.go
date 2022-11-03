@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/fedehsq/vault-auth-plugin/api/api"
-	"github.com/fedehsq/vault-auth-plugin/api/api/admin"
-	"github.com/fedehsq/vault-auth-plugin/api/api/log"
-	"github.com/fedehsq/vault-auth-plugin/api/api/user"
-	"github.com/fedehsq/vault-auth-plugin/api/config"
-	"github.com/fedehsq/vault-auth-plugin/api/db"
+	"github.com/fedehsq/api/api"
+	"github.com/fedehsq/api/api/admin"
+	"github.com/fedehsq/api/api/log"
+	"github.com/fedehsq/api/api/user"
+	"github.com/fedehsq/api/config"
+	"github.com/fedehsq/api/db"
 	"log"
 	"net/http"
 	"strings"
@@ -26,6 +26,7 @@ func main() {
 		config.Conf.DbPort,
 		config.Conf.DbUser,
 		config.Conf.DbName,
+		config.Conf.DbPassword,
 	)
 	if err != nil {
 		log.Fatal(err)
