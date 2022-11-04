@@ -17,7 +17,7 @@ echo "Enabling ssh..."
 vault secrets enable ssh
 vault write ssh/roles/otp_key_role \
 key_type=otp \
-default_user=vagrant \
+default_user=root \
 cidr_list=0.0.0.0/0
 echo "Writing bastion host policies..."
 vault policy write bh-policy ./bh-policy.hcl
