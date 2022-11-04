@@ -7,11 +7,16 @@ services:
     ports:
       - 8200:8200
     restart: on-failure
-    networks:
-      vault-network:
-        ipv4_address: 172.21.0.10
-        aliases:
-          - vault-server
+
+  ssh-host:
+    container_name: ssh-host
+    tty: true
+    build: ./host
+    restart: on-failure
+    ports:
+      - 22:22
+    depends_on: 
+      - vault-operator
 
   api-server:
     container_name: api-server
@@ -20,40 +25,25 @@ services:
     ports:
       - 19090:19090
     restart: on-failure
-    networks:
-      vault-network:
-        ipv4_address: 172.21.0.30
-        aliases:
-          - api-server
+    depends_on: 
+      - vault-operator
+      - postgres-db
 
   vault-operator:
     container_name: vault-operator
     build: ./vault-operator
     environment:
       VAULT_ADDR: "http://vault-server:8200"
-    networks:
-      vault-network:
-        ipv4_address: 172.21.0.20
-        aliases:
-          - vault-operator
+    depends_on: 
+      - vault-server
 
-  postgresdb:
+  postgres-db:
     build: ./db
     container_name: postgres-db
     ports:
       - '5432:5432'
     volumes:
       - ./pg_data:/var/lib/postgresql/data
-    networks:
-      vault-network:
-        ipv4_address: 172.21.0.50
-        aliases:
-          - postgres-db 
+
 volumes:
   pg_data:
-
-networks:
-  vault-network:
-    ipam:
-      config:
-        - subnet: 172.21.0.0/24
