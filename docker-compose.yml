@@ -1,5 +1,13 @@
 version: '3.9'
 services:
+  postgres-db:
+    build: ./db
+    container_name: postgres-db
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+
   vault-server:
     container_name: vault-server
     tty: true
@@ -7,6 +15,35 @@ services:
     ports:
       - 8200:8200
     restart: on-failure
+
+  vault-operator:
+    container_name: vault-operator
+    build: ./vault-operator
+    environment:
+      VAULT_ADDR: "http://vault-server:8200"
+    depends_on: 
+      - vault-server
+  
+  api-server:
+    container_name: api-server
+    tty: true
+    build: ./api
+    ports:
+      - 19090:19090
+    restart: on-failure
+    depends_on:
+      vault-operator:
+          condition: service_completed_successfully
+
+  bastion-host:
+    container_name: bastion-host
+    tty: true
+    build: ./sshwifty
+    ports:
+      - 8182:8182
+    restart: on-failure
+    depends_on: 
+      - api-server
 
   ssh-host:
     container_name: ssh-host
@@ -16,34 +53,7 @@ services:
     ports:
       - 22:22
     depends_on: 
-      - vault-operator
-
-  api-server:
-    container_name: api-server
-    tty: true
-    build: ./api
-    ports:
-      - 19090:19090
-    restart: on-failure
-    depends_on: 
-      - vault-operator
-      - postgres-db
-
-  vault-operator:
-    container_name: vault-operator
-    build: ./vault-operator
-    environment:
-      VAULT_ADDR: "http://vault-server:8200"
-    depends_on: 
-      - vault-server
-
-  postgres-db:
-    build: ./db
-    container_name: postgres-db
-    ports:
-      - '5432:5432'
-    volumes:
-      - ./pg_data:/var/lib/postgresql/data
+      - bastion-host
 
 volumes:
   pg_data:
