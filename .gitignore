@@ -10,7 +10,7 @@ demo.mov
 # Test binary, built with `go test -c`
 *.test
 .DS_Store
-pg_data
+pg_data/
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
