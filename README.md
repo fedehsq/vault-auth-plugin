@@ -126,7 +126,7 @@ To launch the application manually, you need to run the following commands:
     ```
     - Create a Vault SSH Helper configuration file `/etc/vault-ssh-helper.d/config.hcl`
     ```
-    sudo tee /etc/vault-ssh-helper.d/config.hcl <<EOF
+    $ sudo tee /etc/vault-ssh-helper.d/config.hcl <<EOF
     vault_addr = "$VAULT_ADDR"
     tls_skip_verify = false
     ssh_mount_point = "ssh"
