@@ -1,0 +1,58 @@
+basePath: /api/v1
+definitions:
+  log.Log:
+    properties:
+      command:
+        example: Signin User
+        type: string
+      id:
+        example: 1
+        type: integer
+      ip:
+        example: 127.0.0.1:50336
+        type: string
+      time:
+        example: "2022-10-27 10:18:47.791249"
+        type: string
+    type: object
+host: localhost:19090
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /logs:
+    get:
+      description: get all logs
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/log.Log'
+            type: array
+        "400":
+          description: Bad Request
+        "403":
+          description: Forbidden
+      security:
+      - JWT: []
+      summary: List logs
+      tags:
+      - logs
+securityDefinitions:
+  JWT:
+    in: header
+    name: JWT
+    type: apiKey
+swagger: "2.0"

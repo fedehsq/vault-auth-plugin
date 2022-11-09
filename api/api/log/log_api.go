@@ -7,6 +7,16 @@ import (
 	"net/http"
 )
 
+// ListLogs godoc
+// @Summary      List logs
+// @Description  get all logs
+// @Tags         logs
+// @Produce      json
+// @Success      200  {array}   log.Log
+// @Failure      400
+// @Failure      403
+// @Router       /logs [get]
+// @Security 	 JWT
 func GetAll(w http.ResponseWriter, r *http.Request) {
 	api.WriteLog("GetAll Logs", r)
 	ok, err := api.VerifyToken(r)
