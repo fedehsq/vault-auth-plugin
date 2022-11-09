@@ -10,10 +10,23 @@ import (
 )
 
 type User struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username string `json:"username" example:"user"`
+	Password string `json:"password" example:"pwd"`
 }
 
+// SignupUser godoc
+//
+//	@Summary      Signup an user
+//	@Description  Signup an user passing username and password in json
+//	@Tags         users
+//	@Accept       json
+//	@Produce      json
+//	@Param        account  body      User  true  "Add user"
+//	@Success      201      {object}  user.User
+//	@Failure      400
+//	@Failure      401
+//	@Router       /signup [post]
+//  @Security 	 JWT
 func Signup(w http.ResponseWriter, r *http.Request) {
 	api.WriteLog("Signup User", r)
 	ok, err := api.VerifyToken(r)
@@ -47,6 +60,20 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
+
+// SigninUser godoc
+//
+//	@Summary      Signin an user
+//	@Description  Signin an user passing username and password in json
+//	@Tags         users
+//	@Accept       json
+//	@Produce      json
+//	@Param        account  body      User  true  "Signin user"
+//	@Success      200      {object}  user.User
+//	@Failure      400
+//	@Failure      401
+//	@Router       /signin [post]
+//  @Security 	 JWT
 func Signin(w http.ResponseWriter, r *http.Request) {
 	api.WriteLog("Signin User", r)
 	ok, err := api.VerifyToken(r)
@@ -92,6 +119,17 @@ func Signin(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(u)
 }
 
+// DeleteUser godoc
+//
+//	@Summary      Delete an user
+//	@Description  Delete user passing username
+//	@Tags         users
+//	@Param        username query string false "user to search by username"  Format(string)
+//	@Success      200       "DELETED"
+//	@Failure      400
+//	@Failure      401
+//	@Router       /user [delete]
+//  @Security 	 JWT
 func Delete(w http.ResponseWriter, r *http.Request) {
 	api.WriteLog("Delete User", r)
 	ok, err := api.VerifyToken(r)
@@ -113,6 +151,20 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, `DELETED`)
 }
 
+// UpdateUser godoc
+//
+//	@Summary      Update an user
+//	@Description  Update an user passing username and password in json
+//	@Tags         users
+//	@Accept       json
+//	@Produce      json
+//	@Param        account  body      User  true  "Update user"
+//	@Success      200      {object}  user.User
+//	@Failure      400
+//	@Failure      401
+//	@Failure      404
+//	@Router       /user [put]
+//  @Security 	 JWT
 func Update(w http.ResponseWriter, r *http.Request) {
 	api.WriteLog("Update User", r)
 	ok, err := api.VerifyToken(r)
@@ -133,7 +185,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	}
 	user, err := userdao.Update(p.Username, p.Password)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -141,6 +193,17 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
+// GetUsers godoc
+//
+//	@Summary      Get all users
+//	@Description  Get all users
+//	@Tags         users
+//	@Produce      json
+//	@Success      200      {array}  user.User
+//	@Failure      400
+//	@Failure      401
+//	@Router       /users [get]
+//  @Security 	 JWT
 func GetAll(w http.ResponseWriter, r *http.Request) {
 	api.WriteLog("Get Users", r)
 	ok, err := api.VerifyToken(r)
