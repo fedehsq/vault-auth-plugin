@@ -10,21 +10,57 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "http://swagger.io/terms/",
         "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+            "name": "API Support"
         },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/admin-signin": {
+            "post": {
+                "description": "Signin an admin passing username and password in json",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Signin an admin",
+                "parameters": [
+                    {
+                        "description": "Signin admin",
+                        "name": "admin",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/adminapi.AdminReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/adminapi.AdminResp"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
         "/logs": {
             "get": {
                 "security": [
@@ -80,11 +116,11 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "Signin user",
-                        "name": "account",
+                        "name": "user",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/userapi.User"
+                            "$ref": "#/definitions/userapi.UserReq"
                         }
                     }
                 ],
@@ -92,7 +128,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/user.User"
+                            "$ref": "#/definitions/userapi.UserResp"
                         }
                     },
                     "400": {
@@ -100,6 +136,9 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not Found"
                     }
                 }
             }
@@ -129,7 +168,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/userapi.User"
+                            "$ref": "#/definitions/userapi.UserReq"
                         }
                     }
                 ],
@@ -137,7 +176,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/user.User"
+                            "$ref": "#/definitions/userapi.UserResp"
                         }
                     },
                     "400": {
@@ -150,6 +189,44 @@ const docTemplate = `{
             }
         },
         "/user": {
+            "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Get user passing username",
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get an user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "string",
+                        "description": "user to search by username",
+                        "name": "username",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/userapi.UserResp"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            },
             "put": {
                 "security": [
                     {
@@ -174,7 +251,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/userapi.User"
+                            "$ref": "#/definitions/userapi.UserReq"
                         }
                     }
                 ],
@@ -182,7 +259,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/user.User"
+                            "$ref": "#/definitions/userapi.UserResp"
                         }
                     },
                     "400": {
@@ -250,7 +327,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/user.User"
+                                "$ref": "#/definitions/userapi.UserResp"
                             }
                         }
                     },
@@ -265,6 +342,36 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "adminapi.AdminReq": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "example": "password"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "admin"
+                }
+            }
+        },
+        "adminapi.AdminResp": {
+            "type": "object",
+            "properties": {
+                "jwt": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "password"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "admin"
+                }
+            }
+        },
         "log.Log": {
             "type": "object",
             "properties": {
@@ -286,16 +393,12 @@ const docTemplate = `{
                 }
             }
         },
-        "user.User": {
+        "userapi.UserReq": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "integer",
-                    "example": 1
-                },
                 "password": {
                     "type": "string",
-                    "example": "pwd"
+                    "example": "password"
                 },
                 "username": {
                     "type": "string",
@@ -303,12 +406,12 @@ const docTemplate = `{
                 }
             }
         },
-        "userapi.User": {
+        "userapi.UserResp": {
             "type": "object",
             "properties": {
                 "password": {
                     "type": "string",
-                    "example": "pwd"
+                    "example": "password"
                 },
                 "username": {
                     "type": "string",
@@ -320,7 +423,7 @@ const docTemplate = `{
     "securityDefinitions": {
         "JWT": {
             "type": "apiKey",
-            "name": "JWT",
+            "name": "Authorization",
             "in": "header"
         }
     }
@@ -332,8 +435,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:19090",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "Swagger Example API",
-	Description:      "This is a sample server celler server.",
+	Title:            "Swagger Vault support API",
+	Description:      "This is an API Vault server support.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

@@ -3,7 +3,7 @@ package logapi
 import (
 	"encoding/json"
 	"github.com/fedehsq/api/api"
-	"github.com/fedehsq/api/dao/audit"
+	"github.com/fedehsq/api/dao/log"
 	"net/http"
 )
 
@@ -29,7 +29,7 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	audits, err := auditdao.GetAll()
+	audits, err := logdao.GetAll()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

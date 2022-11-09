@@ -8,12 +8,30 @@ import (
 	"net/http"
 )
 
-type Admin struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	JWT      string `json:"jwt"`
+type AdminReq struct {
+	Username string `json:"username" example:"admin"`
+	Password string `json:"password" example:"password"`
 }
 
+type AdminResp struct {
+	Username string `json:"username" example:"admin"`
+	Password string `json:"password" example:"password"`
+	JWT      string `json:"jwt" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"`
+}
+
+// SigninAdmin godoc
+//
+//		@Summary      Signin an admin
+//		@Description  Signin an admin passing username and password in json
+//		@Tags         admin
+//		@Accept       json
+//		@Produce      json
+//		@Param        admin  body      AdminReq  true  "Signin admin"
+//		@Success      200      {object}  AdminResp
+//		@Failure      400
+//		@Failure      401
+//		@Failure      404
+//		@Router       /admin-signin [post]
 func Signin(w http.ResponseWriter, r *http.Request) {
 	api.WriteLog("Signin Admin", r)
 	var p admin.Admin
@@ -28,15 +46,11 @@ func Signin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if user == nil {
-		http.Error(w, "User does not exist", http.StatusBadRequest)
+		http.Error(w, "Admin does not exist", http.StatusNotFound)
 		return
 	}
 	if user.Password != p.Password {
-		http.Error(w, "Wrong password", http.StatusBadRequest)
-		return
-	}
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "Wrong password", http.StatusUnauthorized)
 		return
 	}
 	token, err := api.GenerateJWT()
@@ -44,7 +58,7 @@ func Signin(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	admin := Admin{
+	admin := AdminResp{
 		Username: user.Username,
 		Password: user.Password,
 		JWT:      token,

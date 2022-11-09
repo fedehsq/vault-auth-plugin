@@ -2,40 +2,33 @@ package main
 
 import (
 	"fmt"
+	"github.com/fedehsq/api/api/admin"
+	"github.com/fedehsq/api/api/log"
+	"github.com/fedehsq/api/api/user"
+	"github.com/fedehsq/api/config"
+	"github.com/fedehsq/api/db"
+	_ "github.com/fedehsq/api/docs"
+	"github.com/gorilla/mux"
+	"github.com/rs/cors"
+	"github.com/swaggo/http-swagger"
 	"log"
 	"net/http"
 	"strings"
-
 	"time"
-
-	//"github.com/fedehsq/api/api"
-	adminapi "github.com/fedehsq/api/api/admin"
-	logapi "github.com/fedehsq/api/api/log"
-	userapi "github.com/fedehsq/api/api/user"
-	"github.com/fedehsq/api/config"
-	"github.com/fedehsq/api/db"
-
-	"github.com/gorilla/mux"
 )
 
-// @title           Swagger Example API
+// @title           Swagger Vault support API
 // @version         1.0
-// @description     This is a sample server celler server.
-// @termsOfService  http://swagger.io/terms/
+// @description     This is an API Vault server support.
 
 // @contact.name   API Support
-// @contact.url    http://www.swagger.io/support
-// @contact.email  support@swagger.io
-
-// @license.name  Apache 2.0
-// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
 // @host      localhost:19090
 // @BasePath  /api/v1
 
-//@securityDefinitions.apikey JWT
-//@in header
-//@name JWT
+// @securityDefinitions.apikey JWT
+// @in header
+// @name Authorization
 
 func main() {
 	err := config.LoadConfig(".")
@@ -66,8 +59,10 @@ func main() {
 	r.HandleFunc("/api/v1/user", userapi.GetByUsername).Methods("GET")
 	r.HandleFunc("/api/v1/user", userapi.Update).Methods("PUT")
 	r.HandleFunc("/api/v1/user", userapi.Delete).Methods("DELETE")
+	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
+	handler := cors.AllowAll().Handler(r)
 	srv := &http.Server{
-		Handler:      r,
+		Handler:      handler,
 		Addr:         strings.Replace(config.Conf.ApiAddress, "http://", "", 1),
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,

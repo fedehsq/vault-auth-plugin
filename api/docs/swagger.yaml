@@ -1,5 +1,26 @@
 basePath: /api/v1
 definitions:
+  adminapi.AdminReq:
+    properties:
+      password:
+        example: password
+        type: string
+      username:
+        example: admin
+        type: string
+    type: object
+  adminapi.AdminResp:
+    properties:
+      jwt:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        type: string
+      password:
+        example: password
+        type: string
+      username:
+        example: admin
+        type: string
+    type: object
   log.Log:
     properties:
       command:
@@ -15,22 +36,19 @@ definitions:
         example: "2022-10-27 10:18:47.791249"
         type: string
     type: object
-  user.User:
+  userapi.UserReq:
     properties:
-      id:
-        example: 1
-        type: integer
       password:
-        example: pwd
+        example: password
         type: string
       username:
         example: user
         type: string
     type: object
-  userapi.User:
+  userapi.UserResp:
     properties:
       password:
-        example: pwd
+        example: password
         type: string
       username:
         example: user
@@ -39,17 +57,39 @@ definitions:
 host: localhost:19090
 info:
   contact:
-    email: support@swagger.io
     name: API Support
-    url: http://www.swagger.io/support
-  description: This is a sample server celler server.
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://swagger.io/terms/
-  title: Swagger Example API
+  description: This is an API Vault server support.
+  title: Swagger Vault support API
   version: "1.0"
 paths:
+  /admin-signin:
+    post:
+      consumes:
+      - application/json
+      description: Signin an admin passing username and password in json
+      parameters:
+      - description: Signin admin
+        in: body
+        name: admin
+        required: true
+        schema:
+          $ref: '#/definitions/adminapi.AdminReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/adminapi.AdminResp'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+      summary: Signin an admin
+      tags:
+      - admin
   /logs:
     get:
       description: get all logs
@@ -79,21 +119,23 @@ paths:
       parameters:
       - description: Signin user
         in: body
-        name: account
+        name: user
         required: true
         schema:
-          $ref: '#/definitions/userapi.User'
+          $ref: '#/definitions/userapi.UserReq'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/user.User'
+            $ref: '#/definitions/userapi.UserResp'
         "400":
           description: Bad Request
         "401":
           description: Unauthorized
+        "404":
+          description: Not Found
       security:
       - JWT: []
       summary: Signin an user
@@ -110,14 +152,14 @@ paths:
         name: account
         required: true
         schema:
-          $ref: '#/definitions/userapi.User'
+          $ref: '#/definitions/userapi.UserReq'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/user.User'
+            $ref: '#/definitions/userapi.UserResp'
         "400":
           description: Bad Request
         "401":
@@ -148,6 +190,30 @@ paths:
       summary: Delete an user
       tags:
       - users
+    get:
+      description: Get user passing username
+      parameters:
+      - description: user to search by username
+        format: string
+        in: query
+        name: username
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userapi.UserResp'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+      security:
+      - JWT: []
+      summary: Get an user
+      tags:
+      - users
     put:
       consumes:
       - application/json
@@ -158,14 +224,14 @@ paths:
         name: account
         required: true
         schema:
-          $ref: '#/definitions/userapi.User'
+          $ref: '#/definitions/userapi.UserReq'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/user.User'
+            $ref: '#/definitions/userapi.UserResp'
         "400":
           description: Bad Request
         "401":
@@ -187,7 +253,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/user.User'
+              $ref: '#/definitions/userapi.UserResp'
             type: array
         "400":
           description: Bad Request
@@ -201,6 +267,6 @@ paths:
 securityDefinitions:
   JWT:
     in: header
-    name: JWT
+    name: Authorization
     type: apiKey
 swagger: "2.0"
