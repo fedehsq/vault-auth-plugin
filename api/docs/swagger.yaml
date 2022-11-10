@@ -1,4 +1,4 @@
-basePath: /api/v1
+basePath: /api
 definitions:
   adminapi.AdminReq:
     properties:
@@ -62,7 +62,7 @@ info:
   title: Swagger Vault support API
   version: "1.0"
 paths:
-  /admin-signin:
+  /v1/admin/signin:
     post:
       consumes:
       - application/json
@@ -90,7 +90,7 @@ paths:
       summary: Signin an admin
       tags:
       - admin
-  /logs:
+  /v1/log/get-logs:
     get:
       description: get all logs
       produces:
@@ -111,7 +111,74 @@ paths:
       summary: List logs
       tags:
       - logs
-  /signin:
+  /v1/user/delete:
+    delete:
+      description: Delete user passing username
+      parameters:
+      - description: user to search by username
+        format: string
+        in: query
+        name: username
+        type: string
+      responses:
+        "200":
+          description: DELETED
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+      security:
+      - JWT: []
+      summary: Delete an user
+      tags:
+      - users
+  /v1/user/get:
+    get:
+      description: Get user passing username
+      parameters:
+      - description: user to search by username
+        format: string
+        in: query
+        name: username
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userapi.UserResp'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+      security:
+      - JWT: []
+      summary: Get an user
+      tags:
+      - users
+  /v1/user/get-all:
+    get:
+      description: Get all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/userapi.UserResp'
+            type: array
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+      security:
+      - JWT: []
+      summary: Get all users
+      tags:
+      - users
+  /v1/user/signin:
     post:
       consumes:
       - application/json
@@ -141,7 +208,7 @@ paths:
       summary: Signin an user
       tags:
       - users
-  /signup:
+  /v1/user/signup:
     post:
       consumes:
       - application/json
@@ -169,51 +236,7 @@ paths:
       summary: Signup an user
       tags:
       - users
-  /user:
-    delete:
-      description: Delete user passing username
-      parameters:
-      - description: user to search by username
-        format: string
-        in: query
-        name: username
-        type: string
-      responses:
-        "200":
-          description: DELETED
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-      security:
-      - JWT: []
-      summary: Delete an user
-      tags:
-      - users
-    get:
-      description: Get user passing username
-      parameters:
-      - description: user to search by username
-        format: string
-        in: query
-        name: username
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/userapi.UserResp'
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-        "404":
-          description: Not Found
-      security:
-      - JWT: []
-      summary: Get an user
-      tags:
-      - users
+  /v1/user/update:
     put:
       consumes:
       - application/json
@@ -241,27 +264,6 @@ paths:
       security:
       - JWT: []
       summary: Update an user
-      tags:
-      - users
-  /users:
-    get:
-      description: Get all users
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/userapi.UserResp'
-            type: array
-        "400":
-          description: Bad Request
-        "401":
-          description: Unauthorized
-      security:
-      - JWT: []
-      summary: Get all users
       tags:
       - users
 securityDefinitions:

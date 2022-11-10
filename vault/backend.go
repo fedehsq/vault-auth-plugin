@@ -42,8 +42,8 @@ func newBackend() (*backend, error) {
 		BackendType: logical.TypeCredential,
 		PathsSpecial: &logical.Paths{
 			Unauthenticated: []string{
-				"admin-login",
-				"user-login",
+				"user/signin",
+				"admin/signin",
 			},
 		},
 		AuthRenew: b.adminAuthRenew,

@@ -15,7 +15,7 @@ import (
 // @Success      200  {array}   log.Log
 // @Failure      400
 // @Failure      403
-// @Router       /logs [get]
+// @Router       /v1/log/get-logs [get]
 // @Security 	 JWT
 func GetAll(w http.ResponseWriter, r *http.Request) {
 	api.WriteLog("GetAll Logs", r)

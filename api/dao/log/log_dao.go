@@ -1,7 +1,6 @@
 package logdao
 
 import (
-	"fmt"
 	"github.com/fedehsq/api/db"
 	"github.com/fedehsq/api/models/log"
 )
@@ -30,7 +29,5 @@ func GetAll() ([]log.Log, error) {
 		}
 		logs = append(logs, log)
 	}
-	fmt.Println("Inserting log: ", logs)
-
 	return logs, nil
 }

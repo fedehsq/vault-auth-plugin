@@ -21,17 +21,17 @@ type AdminResp struct {
 
 // SigninAdmin godoc
 //
-//		@Summary      Signin an admin
-//		@Description  Signin an admin passing username and password in json
-//		@Tags         admin
-//		@Accept       json
-//		@Produce      json
-//		@Param        admin  body      AdminReq  true  "Signin admin"
-//		@Success      200      {object}  AdminResp
-//		@Failure      400
-//		@Failure      401
-//		@Failure      404
-//		@Router       /admin-signin [post]
+//	@Summary      Signin an admin
+//	@Description  Signin an admin passing username and password in json
+//	@Tags         admin
+//	@Accept       json
+//	@Produce      json
+//	@Param        admin  body      AdminReq  true  "Signin admin"
+//	@Success      200      {object}  AdminResp
+//	@Failure      400
+//	@Failure      401
+//	@Failure      404
+//	@Router       /v1/admin/signin [post]
 func Signin(w http.ResponseWriter, r *http.Request) {
 	api.WriteLog("Signin Admin", r)
 	var p admin.Admin

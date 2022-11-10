@@ -18,7 +18,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/admin-signin": {
+        "/v1/admin/signin": {
             "post": {
                 "description": "Signin an admin passing username and password in json",
                 "consumes": [
@@ -61,7 +61,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/logs": {
+        "/v1/log/get-logs": {
             "get": {
                 "security": [
                     {
@@ -95,7 +95,115 @@ const docTemplate = `{
                 }
             }
         },
-        "/signin": {
+        "/v1/user/delete": {
+            "delete": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Delete user passing username",
+                "tags": [
+                    "users"
+                ],
+                "summary": "Delete an user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "string",
+                        "description": "user to search by username",
+                        "name": "username",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "DELETED"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/v1/user/get": {
+            "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Get user passing username",
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get an user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "string",
+                        "description": "user to search by username",
+                        "name": "username",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/userapi.UserResp"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
+        "/v1/user/get-all": {
+            "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Get all users",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get all users",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/userapi.UserResp"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/v1/user/signin": {
             "post": {
                 "security": [
                     {
@@ -143,7 +251,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/signup": {
+        "/v1/user/signup": {
             "post": {
                 "security": [
                     {
@@ -188,45 +296,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user": {
-            "get": {
-                "security": [
-                    {
-                        "JWT": []
-                    }
-                ],
-                "description": "Get user passing username",
-                "tags": [
-                    "users"
-                ],
-                "summary": "Get an user",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "format": "string",
-                        "description": "user to search by username",
-                        "name": "username",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/userapi.UserResp"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    }
-                }
-            },
+        "/v1/user/update": {
             "put": {
                 "security": [
                     {
@@ -270,72 +340,6 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Not Found"
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "JWT": []
-                    }
-                ],
-                "description": "Delete user passing username",
-                "tags": [
-                    "users"
-                ],
-                "summary": "Delete an user",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "format": "string",
-                        "description": "user to search by username",
-                        "name": "username",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "DELETED"
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                }
-            }
-        },
-        "/users": {
-            "get": {
-                "security": [
-                    {
-                        "JWT": []
-                    }
-                ],
-                "description": "Get all users",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "Get all users",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/userapi.UserResp"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
                     }
                 }
             }
@@ -433,7 +437,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:19090",
-	BasePath:         "/api/v1",
+	BasePath:         "/api",
 	Schemes:          []string{},
 	Title:            "Swagger Vault support API",
 	Description:      "This is an API Vault server support.",

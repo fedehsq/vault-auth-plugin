@@ -30,7 +30,7 @@ type UserResp struct {
 //		@Success      201      {object}  UserResp
 //		@Failure      400
 //		@Failure      401
-//		@Router       /signup [post]
+//		@Router       /v1/user/signup [post]
 //	 	@Security 	 JWT
 func Signup(w http.ResponseWriter, r *http.Request) {
 	api.WriteLog("Signup User", r)
@@ -81,7 +81,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 //	@Failure      400
 //	@Failure      401
 //	@Failure      404
-//	@Router       /signin [post]
+//	@Router       /v1/user/signin [post]
 //	@Security 	 JWT
 func Signin(w http.ResponseWriter, r *http.Request) {
 	api.WriteLog("Signin User", r)
@@ -132,7 +132,7 @@ func Signin(w http.ResponseWriter, r *http.Request) {
 //		@Success      200       "DELETED"
 //		@Failure      400
 //		@Failure      401
-//		@Router       /user [delete]
+//		@Router       /v1/user/delete [delete]
 //	 	@Security 	 JWT
 func Delete(w http.ResponseWriter, r *http.Request) {
 	api.WriteLog("Delete User", r)
@@ -167,7 +167,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 //		@Failure      400
 //		@Failure      401
 //		@Failure      404
-//		@Router       /user [put]
+//		@Router       /v1/user/update [put]
 //	 	@Security 	 JWT
 func Update(w http.ResponseWriter, r *http.Request) {
 	api.WriteLog("Update User", r)
@@ -210,7 +210,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 //		@Success      200      {array}  UserResp
 //		@Failure      400
 //		@Failure      401
-//		@Router       /users [get]
+//		@Router       /v1/user/get-all [get]
 //	 	@Security 	 JWT
 func GetAll(w http.ResponseWriter, r *http.Request) {
 	api.WriteLog("Get Users", r)
@@ -251,7 +251,7 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 //		@Failure      400
 //		@Failure      401
 //		@Failure      404
-//		@Router       /user [get]
+//		@Router       /v1/user/get [get]
 //	 	@Security 	 JWT
 func GetByUsername(w http.ResponseWriter, r *http.Request) {
 	api.WriteLog("Get User", r)

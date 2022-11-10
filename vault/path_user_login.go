@@ -11,7 +11,7 @@ import (
 // Handle user login
 func (b *backend) pathLogin() *framework.Path {
 	return &framework.Path{
-		Pattern: "user-login$",
+		Pattern: "user/signin$",
 		Fields: map[string]*framework.FieldSchema{
 			"username": {
 				Type:        framework.TypeString,
@@ -25,7 +25,7 @@ func (b *backend) pathLogin() *framework.Path {
 		Operations: map[logical.Operation]framework.OperationHandler{
 			logical.UpdateOperation: &framework.PathOperation{
 				Callback: b.handleLogin,
-				Summary:  "Log in using a username and password",
+				Summary:  "Log in using a username and password.",
 			},
 		},
 	}
