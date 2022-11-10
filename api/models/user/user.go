@@ -2,6 +2,6 @@ package user
 
 type User struct {
 	Id       int
-	Username string
-	Password string
+	Username string `json:"username" example:"user"`
+	Password string `json:"password" example:"pwd"`
 }

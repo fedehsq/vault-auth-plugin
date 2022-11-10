@@ -1,0 +1,274 @@
+basePath: /api
+definitions:
+  adminapi.AdminReq:
+    properties:
+      password:
+        example: password
+        type: string
+      username:
+        example: admin
+        type: string
+    type: object
+  adminapi.AdminResp:
+    properties:
+      jwt:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        type: string
+      password:
+        example: password
+        type: string
+      username:
+        example: admin
+        type: string
+    type: object
+  log.Log:
+    properties:
+      command:
+        example: Signin User
+        type: string
+      id:
+        example: 1
+        type: integer
+      ip:
+        example: 127.0.0.1:50336
+        type: string
+      time:
+        example: "2022-10-27 10:18:47.791249"
+        type: string
+    type: object
+  userapi.UserReq:
+    properties:
+      password:
+        example: password
+        type: string
+      username:
+        example: user
+        type: string
+    type: object
+  userapi.UserResp:
+    properties:
+      password:
+        example: password
+        type: string
+      username:
+        example: user
+        type: string
+    type: object
+host: localhost:19090
+info:
+  contact:
+    name: API Support
+  description: This is an API Vault server support.
+  title: Swagger Vault support API
+  version: "1.0"
+paths:
+  /v1/admin/signin:
+    post:
+      consumes:
+      - application/json
+      description: Signin an admin passing username and password in json
+      parameters:
+      - description: Signin admin
+        in: body
+        name: admin
+        required: true
+        schema:
+          $ref: '#/definitions/adminapi.AdminReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/adminapi.AdminResp'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+      summary: Signin an admin
+      tags:
+      - admin
+  /v1/log/get-logs:
+    get:
+      description: get all logs
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/log.Log'
+            type: array
+        "400":
+          description: Bad Request
+        "403":
+          description: Forbidden
+      security:
+      - JWT: []
+      summary: List logs
+      tags:
+      - logs
+  /v1/user/delete:
+    delete:
+      description: Delete user passing username
+      parameters:
+      - description: user to search by username
+        format: string
+        in: query
+        name: username
+        type: string
+      responses:
+        "200":
+          description: DELETED
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+      security:
+      - JWT: []
+      summary: Delete an user
+      tags:
+      - users
+  /v1/user/get:
+    get:
+      description: Get user passing username
+      parameters:
+      - description: user to search by username
+        format: string
+        in: query
+        name: username
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userapi.UserResp'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+      security:
+      - JWT: []
+      summary: Get an user
+      tags:
+      - users
+  /v1/user/get-all:
+    get:
+      description: Get all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/userapi.UserResp'
+            type: array
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+      security:
+      - JWT: []
+      summary: Get all users
+      tags:
+      - users
+  /v1/user/signin:
+    post:
+      consumes:
+      - application/json
+      description: Signin an user passing username and password in json
+      parameters:
+      - description: Signin user
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/userapi.UserReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userapi.UserResp'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+      security:
+      - JWT: []
+      summary: Signin an user
+      tags:
+      - users
+  /v1/user/signup:
+    post:
+      consumes:
+      - application/json
+      description: Signup an user passing username and password in json
+      parameters:
+      - description: Add user
+        in: body
+        name: account
+        required: true
+        schema:
+          $ref: '#/definitions/userapi.UserReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/userapi.UserResp'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+      security:
+      - JWT: []
+      summary: Signup an user
+      tags:
+      - users
+  /v1/user/update:
+    put:
+      consumes:
+      - application/json
+      description: Update an user passing username and password in json
+      parameters:
+      - description: Update user
+        in: body
+        name: account
+        required: true
+        schema:
+          $ref: '#/definitions/userapi.UserReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userapi.UserResp'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+      security:
+      - JWT: []
+      summary: Update an user
+      tags:
+      - users
+securityDefinitions:
+  JWT:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

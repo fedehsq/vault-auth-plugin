@@ -9,11 +9,29 @@ import (
 	"net/http"
 )
 
-type User struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+type UserReq struct {
+	Username string `json:"username" example:"user"`
+	Password string `json:"password" example:"password"`
 }
 
+type UserResp struct {
+	Username string `json:"username" example:"user"`
+	Password string `json:"password" example:"password"`
+}
+
+// SignupUser godoc
+//
+//		@Summary      Signup an user
+//		@Description  Signup an user passing username and password in json
+//		@Tags         users
+//		@Accept       json
+//		@Produce      json
+//		@Param        account  body      UserReq  true  "Add user"
+//		@Success      201      {object}  UserResp
+//		@Failure      400
+//		@Failure      401
+//		@Router       /v1/user/signup [post]
+//	 	@Security 	 JWT
 func Signup(w http.ResponseWriter, r *http.Request) {
 	api.WriteLog("Signup User", r)
 	ok, err := api.VerifyToken(r)
@@ -42,11 +60,29 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	u := UserResp{
+		Username: p.Username,
+		Password: p.Password,
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(user)
+	json.NewEncoder(w).Encode(u)
 }
 
+// SigninUser godoc
+//
+//	@Summary      Signin an user
+//	@Description  Signin an user passing username and password in json
+//	@Tags         users
+//	@Accept       json
+//	@Produce      json
+//	@Param        user  body      UserReq  true  "Signin user"
+//	@Success      200   {object}  UserResp
+//	@Failure      400
+//	@Failure      401
+//	@Failure      404
+//	@Router       /v1/user/signin [post]
+//	@Security 	 JWT
 func Signin(w http.ResponseWriter, r *http.Request) {
 	api.WriteLog("Signin User", r)
 	ok, err := api.VerifyToken(r)
@@ -71,27 +107,33 @@ func Signin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if user == nil {
-		http.Error(w, "User does not exist", http.StatusBadRequest)
+		http.Error(w, "User does not exist", http.StatusNotFound)
 		return
 	}
 	if user.Password != p.Password {
-		http.Error(w, "Wrong password", http.StatusBadRequest)
+		http.Error(w, "Wrong password", http.StatusUnauthorized)
 		return
 	}
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	u := User{
+	u := UserResp{
 		Username: user.Username,
 		Password: user.Password,
 	}
-
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(u)
 }
 
+// DeleteUser godoc
+//
+//		@Summary      Delete an user
+//		@Description  Delete user passing username
+//		@Tags         users
+//		@Param        username query string false "user to search by username"  Format(string)
+//		@Success      200       "DELETED"
+//		@Failure      400
+//		@Failure      401
+//		@Router       /v1/user/delete [delete]
+//	 	@Security 	 JWT
 func Delete(w http.ResponseWriter, r *http.Request) {
 	api.WriteLog("Delete User", r)
 	ok, err := api.VerifyToken(r)
@@ -113,6 +155,20 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, `DELETED`)
 }
 
+// UpdateUser godoc
+//
+//		@Summary      Update an user
+//		@Description  Update an user passing username and password in json
+//		@Tags         users
+//		@Accept       json
+//		@Produce      json
+//		@Param        account  body      UserReq  true  "Update user"
+//		@Success      200      {object}  UserResp
+//		@Failure      400
+//		@Failure      401
+//		@Failure      404
+//		@Router       /v1/user/update [put]
+//	 	@Security 	 JWT
 func Update(w http.ResponseWriter, r *http.Request) {
 	api.WriteLog("Update User", r)
 	ok, err := api.VerifyToken(r)
@@ -133,14 +189,29 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	}
 	user, err := userdao.Update(p.Username, p.Password)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
+	}
+	u := UserResp{
+		Username: user.Username,
+		Password: user.Password,
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(user)
+	json.NewEncoder(w).Encode(u)
 }
 
+// GetUsers godoc
+//
+//		@Summary      Get all users
+//		@Description  Get all users
+//		@Tags         users
+//		@Produce      json
+//		@Success      200      {array}  UserResp
+//		@Failure      400
+//		@Failure      401
+//		@Router       /v1/user/get-all [get]
+//	 	@Security 	 JWT
 func GetAll(w http.ResponseWriter, r *http.Request) {
 	api.WriteLog("Get Users", r)
 	ok, err := api.VerifyToken(r)
@@ -158,11 +229,30 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	var usersResp []UserResp
+	for _, u := range users {
+		usersResp = append(usersResp, UserResp{
+			Username: u.Username,
+			Password: u.Password,
+		})
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(users)
+	json.NewEncoder(w).Encode(usersResp)
 }
 
+// GetUser godoc
+//
+//		@Summary      Get an user
+//		@Description  Get user passing username
+//		@Tags         users
+//		@Param        username query string false "user to search by username"  Format(string)
+//		@Success      200      {object}  UserResp
+//		@Failure      400
+//		@Failure      401
+//		@Failure      404
+//		@Router       /v1/user/get [get]
+//	 	@Security 	 JWT
 func GetByUsername(w http.ResponseWriter, r *http.Request) {
 	api.WriteLog("Get User", r)
 	ok, err := api.VerifyToken(r)
@@ -177,10 +267,14 @@ func GetByUsername(w http.ResponseWriter, r *http.Request) {
 
 	user, err := userdao.GetByUsername(r.URL.Query().Get("username"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
+	}
+	u := UserResp{
+		Username: user.Username,
+		Password: user.Password,
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(user)
+	json.NewEncoder(w).Encode(u)
 }

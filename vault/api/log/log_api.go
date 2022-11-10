@@ -21,7 +21,7 @@ func (l *Log) String() string {
 }
 
 func GetAll(jwt string) ([]Log, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/logs", config.Conf.ApiAddress), strings.NewReader(string("")))
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/v1/log/get-all", config.Conf.ApiAddress), strings.NewReader(string("")))
 	if err != nil {
 		return nil, err
 	}

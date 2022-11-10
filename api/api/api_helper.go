@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/fedehsq/api/config"
-	"github.com/fedehsq/api/dao/audit"
-	"github.com/fedehsq/api/models/audit"
+	"github.com/fedehsq/api/dao/log"
+	"github.com/fedehsq/api/models/log"
 	"io"
 	"net/http"
 	"time"
@@ -88,10 +88,10 @@ func GenerateJWT() (string, error) {
 }
 
 func WriteLog(command string, r *http.Request) {
-	audit := audit.Log{
+	audit := log.Log{
 		Time:    time.Now(),
 		Ip:      r.RemoteAddr,
 		Command: command,
 	}
-	auditdao.Insert(&audit)
+	logdao.Insert(&audit)
 }

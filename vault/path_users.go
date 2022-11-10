@@ -9,7 +9,7 @@ import (
 
 func (b *backend) pathUsers() *framework.Path {
 	return &framework.Path{
-		Pattern: "users/?$",
+		Pattern: "user/get-all/?$",
 		Operations: map[logical.Operation]framework.OperationHandler{
 			logical.ListOperation: &framework.PathOperation{
 				Callback: b.handleUsers,

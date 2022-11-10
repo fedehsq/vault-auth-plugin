@@ -10,7 +10,7 @@ import (
 
 func (b *backend) pathLogs() *framework.Path {
 	return &framework.Path{
-		Pattern: "logs/?$",
+		Pattern: "log/get-all/?$",
 		Operations: map[logical.Operation]framework.OperationHandler{
 			logical.ListOperation: &framework.PathOperation{
 				Callback: b.handleLogs,

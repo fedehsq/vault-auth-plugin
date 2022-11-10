@@ -8,13 +8,28 @@ import (
 	"github.com/fedehsq/api/api/user"
 	"github.com/fedehsq/api/config"
 	"github.com/fedehsq/api/db"
+	_ "github.com/fedehsq/api/docs"
+	"github.com/gorilla/mux"
+	"github.com/rs/cors"
+	"github.com/swaggo/http-swagger"
 	"log"
 	"net/http"
 	"strings"
 	"time"
-
-	"github.com/gorilla/mux"
 )
+
+// @title           Swagger Vault support API
+// @version         1.0
+// @description     This is an API Vault server support.
+
+// @contact.name   API Support
+
+// @host      localhost:19090
+// @BasePath  /api
+
+// @securityDefinitions.apikey JWT
+// @in header
+// @name Authorization
 
 func main() {
 	err := config.LoadConfig(".")
@@ -31,22 +46,27 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = api.GetKey(config.Conf.ApiVaultToken)
-	if err != nil {
-		log.Fatal(err)
+
+	if config.Conf.Develop == 0 {
+		err = api.GetKey(config.Conf.ApiVaultToken)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	r := mux.NewRouter()
-	r.HandleFunc("/logs", logapi.GetAll).Methods("GET")
-	r.HandleFunc("/admin-signin", adminapi.Signin).Methods("POST")
-	r.HandleFunc("/signup", userapi.Signup).Methods("POST")
-	r.HandleFunc("/signin", userapi.Signin).Methods("POST")
-	r.HandleFunc("/users", userapi.GetAll).Methods("GET")
-	r.HandleFunc("/user", userapi.GetByUsername).Methods("GET")
-	r.HandleFunc("/user", userapi.Update).Methods("PUT")
-	r.HandleFunc("/user", userapi.Delete).Methods("DELETE")
+	r.HandleFunc("/api/v1/log/get-all", logapi.GetAll).Methods("GET")
+	r.HandleFunc("/api/v1/admin/signin", adminapi.Signin).Methods("POST")
+	r.HandleFunc("/api/v1/user/signup", userapi.Signup).Methods("POST")
+	r.HandleFunc("/api/v1/user/signin", userapi.Signin).Methods("POST")
+	r.HandleFunc("/api/v1/user/get-all", userapi.GetAll).Methods("GET")
+	r.HandleFunc("/api/v1/user/get", userapi.GetByUsername).Methods("GET")
+	r.HandleFunc("/api/v1/user/update", userapi.Update).Methods("PUT")
+	r.HandleFunc("/api/v1/user/delete", userapi.Delete).Methods("DELETE")
+	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
+	handler := cors.AllowAll().Handler(r)
 	srv := &http.Server{
-		Handler:      r,
+		Handler:      handler,
 		Addr:         strings.Replace(config.Conf.ApiAddress, "http://", "", 1),
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,

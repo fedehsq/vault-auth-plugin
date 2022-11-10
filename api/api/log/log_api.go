@@ -3,10 +3,20 @@ package logapi
 import (
 	"encoding/json"
 	"github.com/fedehsq/api/api"
-	"github.com/fedehsq/api/dao/audit"
+	"github.com/fedehsq/api/dao/log"
 	"net/http"
 )
 
+// ListLogs godoc
+// @Summary      List logs
+// @Description  get all logs
+// @Tags         logs
+// @Produce      json
+// @Success      200  {array}   log.Log
+// @Failure      400
+// @Failure      403
+// @Router       /v1/log/get-logs [get]
+// @Security 	 JWT
 func GetAll(w http.ResponseWriter, r *http.Request) {
 	api.WriteLog("GetAll Logs", r)
 	ok, err := api.VerifyToken(r)
@@ -19,7 +29,7 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	audits, err := auditdao.GetAll()
+	audits, err := logdao.GetAll()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

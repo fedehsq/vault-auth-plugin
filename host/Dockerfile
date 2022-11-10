@@ -1,9 +1,9 @@
 FROM ubuntu:22.10
-RUN apt-get update && apt-get install -y wget && rm -rf /var/lib/apt/lists/* \
-  && apt-get update -y && apt-get install -y unzip \
-  && apt-get install -y openssh-server 
+RUN adduser --disabled-password --gecos '' vagrant
+RUN apt-get update && apt-get install -y openssh-server 
 
 # Setup folders
+RUN mkdir /etc/vault-ssh-helper.d/
 RUN mkdir /host
 WORKDIR /host
 
@@ -11,4 +11,9 @@ WORKDIR /host
 COPY . .
 COPY sshd /etc/pam.d/
 COPY sshd_config /etc/ssh/
-CMD ["/bin/bash", "host-setup.sh"]
+COPY vault-ssh-helper /usr/local/bin/
+COPY config.hcl /etc/vault-ssh-helper.d/
+ENV NOTVISIBLE "in users profile"
+RUN echo "export VISIBLE=now" >> /etc/profile
+
+CMD ["/usr/sbin/sshd", "-D"] 

@@ -11,6 +11,7 @@ type Config struct {
 	DbName        string `mapstructure:"DB_NAME"`
 	DbPassword    string `mapstructure:"DB_PASSWORD"`
 	ApiVaultToken string `mapstructure:"VAULT_TOKEN"`
+	Develop       int    `mapstructure:"DEVELOP"`
 }
 
 var Conf *Config
