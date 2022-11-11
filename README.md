@@ -4,12 +4,17 @@ Access to such systems therefore should be as limited as possible and subject to
 To this end, it is useful to define a single point of access on which to focus security audits: such a system is typically referred to as a bastion host.  
 Another critical point in system access is the protection of access keys: these in the enterprise environment are managed in a wide variety of ways, sometimes without any use of protective measures, others with increasingly sophisticated systems such as vaults or HSMs.
 
-The purpose of this thesis project is to implement a system based on bastion hosts, which through the implementation of an authorization workflow, allows granting or denying access to remote systems through the automatic use of keys retrieved from a vault by a bastion host.
+## [HashiCorp Vault](https://www.vaultproject.io/) in a few words
+Manage Secrets & Protect Sensitive Data
+Secure, store and tightly control access to tokens, passwords, certificates, encryption keys for protecting secrets and other sensitive data using a UI, CLI, or HTTP API.
 
-## Auth plugin for [HashiCorp Vault](https://www.vaultproject.io/)
-The first step in the implementation of the system is the development of an authentication plugin for Vault.  
-The plugin is based on the [plugin development guide](https://www.vaultproject.io/docs/internals/plugins.html) provided by HashiCorp and is written in Go.  
-The workflow of the plugin under development is as follows:
+## Thesis puropose
+The purpose of this thesis project is to implement a system based on bastion hosts, which through the implementation of an authorization workflow with Vault, allows granting or denying access to remote systems through the automatic use of keys retrieved from a vault by a bastion host.
+
+# Development
+In this section we will describe the development of the project, starting from the definition of the architecture, the technologies used and the implementation of the Vault plugin.
+## Architecture
+The architecture of the system is shown in the following sequence diagram:
 ```mermaid
 sequenceDiagram
     actor User
@@ -40,8 +45,35 @@ sequenceDiagram
     note over Vault:Vault User Token checks
     Vault->>Bastion Host: OTP
     Bastion Host->>Target Host: Bastion host connects user to the Target Host using the OTP via Sshwifty!
-
 ```
+## Technologies
+The technologies used in the project are:
+- [Go](https://golang.org/) as programming language
+- [HashiCorp Vault](https://www.vaultproject.io/) as a secret management system
+- [Vagrant](https://www.vagrantup.com/) as a virtual machine manager
+- [VMWare Fusion](https://www.vmware.com/products/fusion.html) as a virtual machine
+- [Docker](https://www.docker.com/) as a container manager
+- [Docker Compose](https://docs.docker.com/compose/) as a container orchestrator
+- [PostgreSQL](https://www.postgresql.org/) as a database
+- [Swagger](https://swagger.io/) as a REST API documentation
+- [Sshwifty](https://github.com/nirui/sshwifty) as a SSH web client, with some modifications to allow the communication with the Vault
+
+## Auth plugin for Vault
+A crucial step in the implementation of the system is the development of an authorization plugin for Vault.  
+The plugin is based on the [plugin development guide](https://www.vaultproject.io/docs/internals/plugins.html).  
+The api exposed by the plugin are the following:
+
+
+![](./vault.png)
+
+
+Each call to the plugin calls another API of the API Vault Helper, that adds another layer of security to the system because it uses a JWT to authenticate the calls.  
+The second API reflects the Vault API, but it is used to detach the JWT token when the bastion host authenticates itself before requesting the other operations.
+
+
+![](./vault_helper.png)
+
+
 
 ## Demo
 ![](./demo.gif)
