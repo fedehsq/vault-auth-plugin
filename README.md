@@ -90,12 +90,12 @@ To run with Docker, you only need to run the following commands:
     ```
 2. Run the Docker compose
     ```
-    docker compose up
+    $ docker compose up
     ```
 3. Take a :coffee:
 4. Find the SSH remote host IP address
     ```
-    docker inspect ssh-host | grep IPAddress
+    $ docker inspect ssh-host | grep IPAddress
     ```
     
 5. Open the browser at [http://localhost:8182](http://localhost:8182) and enjoy with default username `elliot` and password `mrrobot`.
