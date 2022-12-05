@@ -49,7 +49,7 @@ sequenceDiagram
 ## Technologies
 The technologies used in the project are:
 - [Go](https://golang.org/) as programming language
-- [HashiCorp Vault](https://www.vaultproject.io/) as a secret management system 
+- [HashiCorp Vault](https://www.vaultproject.io/) as a secret management and access control system
 - [JWT](https://jwt.io/) as an additional token system for API authentication and authorization 
 - [Vagrant](https://www.vagrantup.com/) as a virtual machine manager
 - [VMWare Fusion](https://www.vmware.com/products/fusion.html) as a virtual machine
