@@ -6,6 +6,8 @@ require github.com/spf13/viper v1.13.0
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
+	github.com/elastic/elastic-transport-go/v8 v8.0.0-20211216131617-bbee439d559c // indirect
+	github.com/elastic/go-elasticsearch v0.0.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.20.0 // indirect
@@ -40,6 +42,7 @@ require (
 )
 
 require (
+	github.com/elastic/go-elasticsearch/v8 v8.5.0
 	github.com/gorilla/mux v1.8.0
 	github.com/lib/pq v1.10.7
 	github.com/swaggo/http-swagger v1.3.3

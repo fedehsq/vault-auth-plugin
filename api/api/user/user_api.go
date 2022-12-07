@@ -33,13 +33,14 @@ type UserResp struct {
 //		@Router       /v1/user/signup [post]
 //	 	@Security 	 JWT
 func Signup(w http.ResponseWriter, r *http.Request) {
-	api.WriteLog("Signup User", r)
-	ok, err := api.VerifyToken(r)
+	ok, identity, err := api.VerifyToken(r)
 	if err != nil {
+		api.WriteLog("POST", "/v1/user/signup", "Unauthorized user", r.RemoteAddr, "")
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	if !ok {
+		api.WriteLog("POST", "/v1/user/signup", "Unauthorized user", r.RemoteAddr, "")
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
@@ -50,6 +51,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	api.WriteLog("POST", "/v1/user/signup", identity, r.RemoteAddr, p.Json())
 	user, _ := userdao.GetByUsername(p.Username)
 	if user != nil {
 		http.Error(w, "User already exists", http.StatusBadRequest)
@@ -84,13 +86,14 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 //	@Router       /v1/user/signin [post]
 //	@Security 	 JWT
 func Signin(w http.ResponseWriter, r *http.Request) {
-	api.WriteLog("Signin User", r)
-	ok, err := api.VerifyToken(r)
+	ok, identity, err := api.VerifyToken(r)
 	if err != nil {
+		api.WriteLog("POST", "/v1/user/signin", "Unauthorized user", r.RemoteAddr, "")
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	if !ok {
+		api.WriteLog("POST", "/v1/user/signin", "Unauthorized user", r.RemoteAddr, "")
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
@@ -101,6 +104,7 @@ func Signin(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	api.WriteLog("POST", "/v1/user/signin", identity, r.RemoteAddr, p.Json())
 	user, err := userdao.GetByUsername(p.Username)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -135,17 +139,19 @@ func Signin(w http.ResponseWriter, r *http.Request) {
 //		@Router       /v1/user/delete [delete]
 //	 	@Security 	 JWT
 func Delete(w http.ResponseWriter, r *http.Request) {
-	api.WriteLog("Delete User", r)
-	ok, err := api.VerifyToken(r)
+	ok, identity, err := api.VerifyToken(r)
 	if err != nil {
+		api.WriteLog("DELETE", "/v1/user/delete", "Unauthorized user", r.RemoteAddr, "")
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	if !ok {
+		api.WriteLog("DELETE", "/v1/user/delete", "Unauthorized user", r.RemoteAddr, "")
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
+	api.WriteLog("DELETE", "/v1/user/delete", identity, r.RemoteAddr, r.URL.Query().Get("username"))
 	err = userdao.Delete(r.URL.Query().Get("username"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -170,13 +176,14 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 //		@Router       /v1/user/update [put]
 //	 	@Security 	 JWT
 func Update(w http.ResponseWriter, r *http.Request) {
-	api.WriteLog("Update User", r)
-	ok, err := api.VerifyToken(r)
+	ok, identity, err := api.VerifyToken(r)
 	if err != nil {
+		api.WriteLog("PUT", "/v1/user/update", "Unauthorized user", r.RemoteAddr, "")
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	if !ok {
+		api.WriteLog("PUT", "/v1/user/update", "Unauthorized user", r.RemoteAddr, "")
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
@@ -187,6 +194,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	api.WriteLog("PUT", "/v1/user/update", identity, r.RemoteAddr, p.Json())
 	user, err := userdao.Update(p.Username, p.Password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
@@ -213,13 +221,14 @@ func Update(w http.ResponseWriter, r *http.Request) {
 //		@Router       /v1/user/get-all [get]
 //	 	@Security 	 JWT
 func GetAll(w http.ResponseWriter, r *http.Request) {
-	api.WriteLog("Get Users", r)
-	ok, err := api.VerifyToken(r)
+	ok, identity, err := api.VerifyToken(r)
 	if err != nil {
+		api.WriteLog("GET", "/v1/user/get-all", "Unauthorized user", r.RemoteAddr, "")
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	if !ok {
+		api.WriteLog("GET", "/v1/user/get-all", "Unauthorized user", r.RemoteAddr, "")
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
@@ -229,6 +238,7 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	api.WriteLog("GET", "/v1/user/get-all", identity, r.RemoteAddr, "")
 	var usersResp []UserResp
 	for _, u := range users {
 		usersResp = append(usersResp, UserResp{
@@ -254,17 +264,19 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 //		@Router       /v1/user/get [get]
 //	 	@Security 	 JWT
 func GetByUsername(w http.ResponseWriter, r *http.Request) {
-	api.WriteLog("Get User", r)
-	ok, err := api.VerifyToken(r)
+	ok, identity, err := api.VerifyToken(r)
 	if err != nil {
+		api.WriteLog("GET", "/v1/user/get", "Unauthorized user", r.RemoteAddr, r.URL.Query().Get("username"))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	if !ok {
+		api.WriteLog("GET", "/v1/user/get", "Unauthorized user", r.RemoteAddr, r.URL.Query().Get("username"))
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
+	api.WriteLog("GET", "/v1/user/get", identity, r.RemoteAddr, r.URL.Query().Get("username"))
 	user, err := userdao.GetByUsername(r.URL.Query().Get("username"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)

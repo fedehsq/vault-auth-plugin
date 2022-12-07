@@ -14,7 +14,10 @@ CREATE TABLE "logs" (
     id SERIAL PRIMARY KEY,
     time TIMESTAMP,
     ip TEXT,
-    command TEXT
+    caller_identity TEXT,
+    method TEXT,
+    route TEXT,
+    body TEXT
 );
 
 /* Add a user to the database */

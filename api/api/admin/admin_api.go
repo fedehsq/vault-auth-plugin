@@ -33,13 +33,13 @@ type AdminResp struct {
 //	@Failure      404
 //	@Router       /v1/admin/signin [post]
 func Signin(w http.ResponseWriter, r *http.Request) {
-	api.WriteLog("Signin Admin", r)
 	var p admin.Admin
 	err := json.NewDecoder(r.Body).Decode(&p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	api.WriteLog("POST", r.URL.Path, "", r.RemoteAddr, p.Username)
 	user, err := admindao.GetByUsername(p.Username)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -53,7 +53,7 @@ func Signin(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Wrong password", http.StatusUnauthorized)
 		return
 	}
-	token, err := api.GenerateJWT()
+	token, err := api.GenerateJWT(user.Username)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
