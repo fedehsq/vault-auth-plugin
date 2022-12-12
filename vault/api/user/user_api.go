@@ -25,7 +25,7 @@ func SignIn(username string, password string, jwt string) (*User, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/api/v1/user/signin", config.Conf.ApiAddress), strings.NewReader(string(rb)))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/api/v1/users/signin", config.Conf.ApiAddress), strings.NewReader(string(rb)))
 	if err != nil {
 		return nil, err
 	}

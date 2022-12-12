@@ -199,10 +199,36 @@ To launch the application manually, you need to run the following commands:
     ```
     $ vault-ssh-helper -verify-only -dev -config /etc/vault-ssh-helper.d/config.hcl
     ```   
+    - Find the ipv4 address of the remote host
+    ```
+    $ ip -4 address show eth1 | grep inet | awk '{print $2}' | cut -d'/' -f1
+    ```   
     - Exit from the remote host
     ```
     $ exit
     ```
+
+7. (Optional) If you want to have a Log Management System, you have to install Elastic Stack on your machine.
+    - Install [Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html)
+    - Install [Kibana](https://www.elastic.co/guide/en/kibana/current/install.html)
+    - Install [Logstash](https://www.elastic.co/guide/en/logstash/current/installing-logstash.html)
+    - Copy `elasticsearch/logstash/config` in your Logstash installation directory and edit `logs.conf`.
+    - Edit `elasticsearch/logstash/pipelines.yml` in your Logstash installation directory and edit `pipelines.yml`.
+    - Edit `${YOUR_ELASTIC_SEARCH}/conf/elasticsearch.yml` adding:
+        ``` 
+            xpack.security.enabled: true
+            
+            xpack.security.http.ssl:
+            enabled: false
+
+            xpack.security.transport.ssl:
+            enabled: false 
+        ```
+    - Edit `${YOUR_KIBANA}/conf/kibana.yml` adding:
+        ``` 
+            elasticsearch.hosts: ['http://localhost:9200']
+            type: elasticsearch, hosts: ['http://localhost:9200']]
+        ```
 
 7. Build and starts the web client over the bastion host
     ```

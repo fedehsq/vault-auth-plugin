@@ -11,7 +11,7 @@ import (
 // Handle user login
 func (b *backend) pathLogin() *framework.Path {
 	return &framework.Path{
-		Pattern: "user/signin$",
+		Pattern: "users/signin$",
 		Fields: map[string]*framework.FieldSchema{
 			"username": {
 				Type:        framework.TypeString,

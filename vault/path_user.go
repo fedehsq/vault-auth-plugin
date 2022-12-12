@@ -10,7 +10,7 @@ import (
 func (b *backend) pathUser() []*framework.Path {
 	return []*framework.Path{
 		{
-			Pattern: "user/" + framework.GenericNameRegex("username"),
+			Pattern: "users/" + framework.GenericNameRegex("username"),
 
 			Fields: map[string]*framework.FieldSchema{
 				"username": {
@@ -95,15 +95,3 @@ func (b *backend) handleUserDelete(ctx context.Context, req *logical.Request, da
 
 	return nil, nil
 }
-
-// func (b *backend) handleExistenceCheck(ctx context.Context, req *logical.Request, data *framework.FieldData) (bool, error) {
-// 	username := data.Get("username").(string)
-// 	if username == "" {
-// 		return false, nil
-// 	}
-// 	_, err := user.GetUser(username, b.jwt)
-// 	if err != nil {
-// 		return false, errors.New("failed to get user")
-// 	}
-// 	return true, nil
-// }

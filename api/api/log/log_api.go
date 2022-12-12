@@ -3,40 +3,49 @@ package logapi
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/fedehsq/api/api"
+	"github.com/fedehsq/api/config"
 	"net/http"
 	"strings"
-	// import main package to get the esClient
-	"github.com/fedehsq/api/config"
 )
 
 // ListLogs godoc
 // @Summary      List logs
-// @Description  get all logs
+// @Description  Returns the logs requested; if the parameters are empty returns all
 // @Tags         logs
+// @Param        value query string false "The ip address of the caller;The identity of the caller; The HTTP method called; The route requested; The command inserted"  Format(string)
 // @Produce      json
 // @Success      200  {array}   log.Log
 // @Failure      400
 // @Failure      403
-// @Router       /v1/log/get-logs [get]
+// @Router       /v1/logs/ [get]
 // @Security 	 JWT
-func GetAll(w http.ResponseWriter, r *http.Request) {
+func Get(w http.ResponseWriter, r *http.Request) {
 	ok, identity, err := api.VerifyToken(r)
+	query := r.URL.Query().Get("q")
 
 	if err != nil {
-		api.WriteLog("GET", "/v1/log/get-logs", "Unauthorized user", r.RemoteAddr, "")
+		api.WriteLog("GET", "/v1/logs", "Unauthorized user", r.RemoteAddr, query)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	if !ok {
-		api.WriteLog("GET", "/v1/log/get-logs", "Unauthorized user", r.RemoteAddr, "")
+		api.WriteLog("GET", "/v1/logs", "Unauthorized user", r.RemoteAddr, query)
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
-	api.WriteLog("GET", "/v1/log/get-logs", identity, r.RemoteAddr, "")
+	api.WriteLog("GET", "/v1/logs", identity, r.RemoteAddr, query)
 
-	body :=
-		`{"query": {"match_all": {}}}`
+	var body string
+	if query == "" {
+		body =
+			`{"query": {"match_all": {}}}`
+	} else {
+		body = fmt.Sprintf(
+			`{"query": {"multi_match": {"query": "%s", "fields": ["ip", "caller_identity", "method", "route", "body", "time"]}}}`,
+			query)
+	}
 	res, err := config.EsClient.Search(
 		config.EsClient.Search.WithContext(context.Background()),
 		//config.EsClient.Search.WithIndex("logs"),

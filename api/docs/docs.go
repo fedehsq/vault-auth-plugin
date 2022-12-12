@@ -61,14 +61,23 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/log/get-logs": {
+        "/v1/logs": {
             "get": {
                 "security": [
                     {
                         "JWT": []
                     }
                 ],
-                "description": "get all logs",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "string",
+                        "description": "The ip address of the caller;The identity of the caller; The HTTP method called; The route requested; The command inserted",
+                        "name": "q",
+                        "in": "query"
+                    }
+                ],
+                "description": "Returns the logs requested; if the parameters are empty returns all",
                 "produces": [
                     "application/json"
                 ],
@@ -95,7 +104,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/user/delete": {
+        "/v1/users": {
             "delete": {
                 "security": [
                     {
@@ -127,9 +136,7 @@ const docTemplate = `{
                         "description": "Unauthorized"
                     }
                 }
-            }
-        },
-        "/v1/user/get": {
+            },
             "get": {
                 "security": [
                     {
@@ -167,91 +174,7 @@ const docTemplate = `{
                         "description": "Not Found"
                     }
                 }
-            }
-        },
-        "/v1/user/get-all": {
-            "get": {
-                "security": [
-                    {
-                        "JWT": []
-                    }
-                ],
-                "description": "Get all users",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "Get all users",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/userapi.UserResp"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                }
-            }
-        },
-        "/v1/user/signin": {
-            "post": {
-                "security": [
-                    {
-                        "JWT": []
-                    }
-                ],
-                "description": "Signin an user passing username and password in json",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "Signin an user",
-                "parameters": [
-                    {
-                        "description": "Signin user",
-                        "name": "user",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/userapi.UserReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/userapi.UserResp"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    }
-                }
-            }
-        },
-        "/v1/user/signup": {
+            },
             "post": {
                 "security": [
                     {
@@ -294,9 +217,7 @@ const docTemplate = `{
                         "description": "Unauthorized"
                     }
                 }
-            }
-        },
-        "/v1/user/update": {
+            },
             "put": {
                 "security": [
                     {
@@ -318,6 +239,54 @@ const docTemplate = `{
                     {
                         "description": "Update user",
                         "name": "account",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userapi.UserReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/userapi.UserResp"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
+        "/v1/users/signin": {
+            "post": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Signin an user passing username and password in json",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Signin an user",
+                "parameters": [
+                    {
+                        "description": "Signin user",
+                        "name": "user",
                         "in": "body",
                         "required": true,
                         "schema": {
