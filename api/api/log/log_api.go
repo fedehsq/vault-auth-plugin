@@ -48,7 +48,7 @@ func Get(w http.ResponseWriter, r *http.Request) {
 	}
 	res, err := config.EsClient.Search(
 		config.EsClient.Search.WithContext(context.Background()),
-		//config.EsClient.Search.WithIndex("logs"),
+		config.EsClient.Search.WithIndex("logs"),
 		config.EsClient.Search.WithBody(strings.NewReader(body)),
 		config.EsClient.Search.WithPretty(),
 	)
@@ -68,7 +68,10 @@ func Get(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]interface{}{
-		"data": logs["hits"],
-	})
+	// Encode only the hits part of the response body, without the keys as array of strings
+	// (the keys are the fields of the struct Log)
+	if err := json.NewEncoder(w).Encode(logs["hits"].(map[string]interface{})["hits"]); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 }
