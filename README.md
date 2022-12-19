@@ -216,7 +216,7 @@ To launch the application manually, you need to run the following commands:
     - Edit `elasticsearch/logstash/pipelines.yml` in your Logstash installation directory and edit `pipelines.yml`.
     - Edit `${YOUR_ELASTIC_SEARCH}/conf/elasticsearch.yml` adding:
         ``` 
-            xpack.security.enabled: true
+            xpack.security.enabled: false
             
             xpack.security.http.ssl:
             enabled: false

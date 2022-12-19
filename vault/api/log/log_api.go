@@ -3,34 +3,17 @@ package logapi
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/fedehsq/vault/config"
 	"io"
 	"net/http"
 	"strings"
-	"time"
-
-	"github.com/fedehsq/vault/config"
 )
 
-// Create a struct with this structure:
-/* [{
-    "_id": "33",
-    "_index": "logs",
-    "_score": 1,
-    "_source": {
-        "body": "2022",
-        "caller_identity": "Unauthorized user",
-        "id": 33,
-        "ip": "127.0.0.1:52954",
-        "method": "GET",
-        "route": "/v1/logs",
-        "time": "2022-12-12T10:46:58.116079Z"
-    }
-}] */
 type ElkResponse struct {
-	Id     string `json:"_id"`
-	Index  string `json:"_index"`
-	Score  int    `json:"_score"`
-	Source Log    `json:"_source"`
+	Id     string  `json:"_id"`
+	Index  string  `json:"_index"`
+	Score  float64 `json:"_score"`
+	Source Log     `json:"_source"`
 }
 
 func (e *ElkResponse) String() string {
@@ -38,16 +21,16 @@ func (e *ElkResponse) String() string {
 }
 
 type Log struct {
-	Body           string    `json:"body" example:"{username: admin, password: ********}"`
-	CallerIdentity string    `json:"caller_identity" example:"admin"`
-	Ip             string    `json:"ip" example:"127.0.0.1:50336"`
-	Method         string    `json:"method" example:"POST"`
-	Route          string    `json:"route" example:"/api/v1/admin/signin"`
-	Time           time.Time `json:"time" example:"2022-10-27 10:18:47.791249"`
+	Body           string `json:"body" example:"{username: admin, password: ********}"`
+	CallerIdentity string `json:"caller_identity" example:"admin"`
+	Ip             string `json:"ip" example:"127.0.0.1:50336"`
+	Method         string `json:"method" example:"POST"`
+	Route          string `json:"route" example:"/api/v1/admin/signin"`
+	Time           string `json:"time" example:"Tue Nov 10 23:00:00 UTC 2009"`
 }
 
 func (l *Log) String() string {
-	return fmt.Sprintf("Body: %s, Caller identity: %s, Ip: %s, Method: %s, Route:%s, Time: %s", l.Body, l.CallerIdentity, l.Ip, l.Method, l.Route, l.Time.String())
+	return fmt.Sprintf("Body: %s, Caller identity: %s, Ip: %s, Method: %s, Route:%s, Time: %s", l.Body, l.CallerIdentity, l.Ip, l.Method, l.Route, l.Time)
 }
 
 func Get(jwt string, q string) ([]ElkResponse, error) {

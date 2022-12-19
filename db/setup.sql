@@ -12,7 +12,7 @@ CREATE TABLE "admins" (
 
 CREATE TABLE "logs" (
     id SERIAL PRIMARY KEY,
-    time TIMESTAMP,
+    time TEXT,
     ip TEXT,
     caller_identity TEXT,
     method TEXT,

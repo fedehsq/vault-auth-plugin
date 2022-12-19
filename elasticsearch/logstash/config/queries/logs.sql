@@ -1,1 +1,1 @@
-SELECT * FROM logs WHERE id > :sql_last_value ORDER BY id;
+SELECT * FROM logs WHERE id > :sql_last_value

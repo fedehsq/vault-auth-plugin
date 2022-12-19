@@ -90,8 +90,9 @@ func GenerateJWT(identity string) (string, error) {
 }
 
 func WriteLog(method string, route string, callerIdentity string, ip string, body string) {
+	// Save time as string
 	audit := log.Log{
-		Time:           time.Now(),
+		Time:           time.Now().Format(time.UnixDate),
 		Ip:             ip,
 		CallerIdentity: callerIdentity,
 		Method:         method,
