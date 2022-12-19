@@ -234,3 +234,4 @@ To launch the application manually, you need to run the following commands:
     ```
     $ bash sshwifty-run.sh
     ```
+ 
