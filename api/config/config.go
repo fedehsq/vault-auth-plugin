@@ -6,15 +6,16 @@ import (
 )
 
 type Config struct {
-	VaultAddress  string `mapstructure:"VAULT_ADDRESS"`
-	ApiAddress    string `mapstructure:"API_ADDRESS"`
-	DbAddress     string `mapstructure:"DB_ADDRESS"`
-	DbPort        int    `mapstructure:"DB_PORT"`
-	DbUser        string `mapstructure:"DB_USER"`
-	DbName        string `mapstructure:"DB_NAME"`
-	DbPassword    string `mapstructure:"DB_PASSWORD"`
-	ApiVaultToken string `mapstructure:"VAULT_TOKEN"`
-	Develop       int    `mapstructure:"DEVELOP"`
+	VaultAddress     string `mapstructure:"VAULT_ADDRESS"`
+	ApiAddress       string `mapstructure:"API_ADDRESS"`
+	ElasticSearch    string `mapstructure:"ELASTICSEARCH_URL"`
+	DbAddress        string `mapstructure:"DB_ADDRESS"`
+	DbPort           int    `mapstructure:"DB_PORT"`
+	DbUser           string `mapstructure:"DB_USER"`
+	DbName           string `mapstructure:"DB_NAME"`
+	DbPassword       string `mapstructure:"DB_PASSWORD"`
+	ApiVaultToken    string `mapstructure:"VAULT_TOKEN"`
+	Develop          int    `mapstructure:"DEVELOP"`
 }
 
 var Conf *Config
@@ -33,7 +34,12 @@ func LoadConfig(path string) error {
 	if err != nil {
 		return err
 	}
-	EsClient, err = elasticsearch.NewDefaultClient()
+	// Set the Elasticsearch client with url from config
+	EsClient, err = elasticsearch.NewClient(elasticsearch.Config{
+		Addresses: []string{
+			Conf.ElasticSearch,
+		},
+	})
 	if err != nil {
 		return err
 	}
