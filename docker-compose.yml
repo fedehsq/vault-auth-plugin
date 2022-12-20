@@ -61,7 +61,9 @@ services:
     environment:
       - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "xpack.security.enabled=false"
+      - "xpack.security.enabled=true"
+      - "xpack.security.transport.ssl.enabled=false"
+      - "ELASTIC_PASSWORD=${ELASTIC_PASSWORD}"
     expose:
       - "9200:9200"
     volumes:

@@ -9,6 +9,7 @@ type Config struct {
 	VaultAddress     string `mapstructure:"VAULT_ADDRESS"`
 	ApiAddress       string `mapstructure:"API_ADDRESS"`
 	ElasticSearch    string `mapstructure:"ELASTICSEARCH_URL"`
+	ElasticSearchPwd string `mapstructure:"ELASTIC_PASSWORD"`
 	DbAddress        string `mapstructure:"DB_ADDRESS"`
 	DbPort           int    `mapstructure:"DB_PORT"`
 	DbUser           string `mapstructure:"DB_USER"`
@@ -39,6 +40,8 @@ func LoadConfig(path string) error {
 		Addresses: []string{
 			Conf.ElasticSearch,
 		},
+		Username: "elastic",
+		Password: Conf.ElasticSearchPwd,
 	})
 	if err != nil {
 		return err
