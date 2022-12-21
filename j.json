@@ -1,8 +1,0 @@
-{   
-    "type" : "auth",
-    "config": {
-        "passthrough_request_headers": [
-            "Authorization"
-        ]
-    }
-}
