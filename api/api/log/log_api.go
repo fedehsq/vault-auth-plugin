@@ -10,6 +10,12 @@ import (
 	"strings"
 )
 
+type LogRequest struct {
+	Command string `json:"command"`
+	SshAddress string `json:"ssh_address"`
+	Username string `json:"username"`
+}
+
 // ListLogs godoc
 // @Summary      List logs
 // @Description  Returns the logs requested; if the parameters are empty returns all
@@ -74,4 +80,39 @@ func Get(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+}
+
+// Create log godoc
+// @Summary      Create log
+// @Description  Creates a new log
+// @Tags         logs
+// @Param        log body log.Log true "The log to create"
+// @Produce      json
+// @Success      200  {object}   log.Log
+// @Failure      400
+// @Failure      403
+// @Router       /v1/logs/ [post]
+// @Security 	 JWT
+func Post(w http.ResponseWriter, r *http.Request) {
+	ok, _, err := api.VerifyToken(r)
+	if err != nil {
+		api.WriteLog("POST", "/v1/logs", "Unauthorized user", r.RemoteAddr, "")
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if !ok {
+		api.WriteLog("POST", "/v1/logs", "Unauthorized user", r.RemoteAddr, "")
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+	
+	var log LogRequest
+	if err := json.NewDecoder(r.Body).Decode(&log); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	api.WriteLog("POST", "/v1/logs", log.Username, log.SshAddress, log.Command)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
 }

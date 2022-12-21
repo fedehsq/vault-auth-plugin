@@ -32,9 +32,8 @@ sequenceDiagram
     API->>Vault: JWT 
     note over Vault: Vault Token creation with the plug-in policies
     Vault->>Bastion Host: Vault Token 
-    note over Bastion Host: Forwards the user credentials to the API using the Vault Token and JWT
+    note over Bastion Host: Forwards the user credentials to the API support server passing the JWT
     Bastion Host->>Vault: User Credentials
-    note over Vault:Vault Token checks
     Vault->>API: User Credentials
     note over API: JWT checks
     API->>Vault: OK

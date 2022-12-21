@@ -2,6 +2,7 @@ package authplugin
 
 import (
 	"context"
+
 	"github.com/fedehsq/vault/api/user"
 	"github.com/hashicorp/vault/sdk/framework"
 	"github.com/hashicorp/vault/sdk/logical"
@@ -36,6 +37,10 @@ func (b *backend) pathUser() []*framework.Path {
 					Callback: b.handleUserDelete,
 					Summary:  "Deletes a user on the auth method.",
 				},
+				logical.ReadOperation: &framework.PathOperation{
+					Callback: b.handleUserRead,
+					Summary:  "Reads a user on the auth method.",
+				},
 			},
 		},
 	}
@@ -55,21 +60,21 @@ func (b *backend) handleUserWrite(ctx context.Context,
 	}
 
 	// Get the JWT from the vault storage
-	JWT, err := getJWT(ctx, req.Storage)
+	jwt, err := getJWT(ctx, req.Storage)
 	if err != nil {
-		return nil, err
+		return logical.ErrorResponse(err.Error()), nil
 	}
 	// check if the user already exists
-	u, _ := userapi.GetUser(username, JWT)
+	u, _ := userapi.GetUser(username, jwt)
 	if u != nil {
 		// Update the user
-		_, err := userapi.UpdateUser(username, password, JWT)
+		_, err := userapi.UpdateUser(username, password, jwt)
 		if err != nil {
 			return logical.ErrorResponse(err.Error()), nil
 		}
 	} else {
 		// Store to db
-		_, err := userapi.SignUp(username, password, JWT)
+		_, err := userapi.SignUp(username, password, jwt)
 		if err != nil {
 			return logical.ErrorResponse(err.Error()), nil
 		}
@@ -77,18 +82,44 @@ func (b *backend) handleUserWrite(ctx context.Context,
 	return nil, nil
 }
 
-func (b *backend) handleUserDelete(ctx context.Context, req *logical.Request, data *framework.FieldData) (*logical.Response, error) {
+func (b *backend) handleUserRead(ctx context.Context,
+	req *logical.Request,
+	data *framework.FieldData) (*logical.Response, error) {
 	username := data.Get("username").(string)
 	if username == "" {
 		return logical.ErrorResponse("username must be provided"), nil
 	}
 
 	// Get the JWT from the vault storage
-	JWT, err := getJWT(ctx, req.Storage)
+	jwt, err := getJWT(ctx, req.Storage)
 	if err != nil {
-		return nil, err
+		return logical.ErrorResponse(err.Error()), nil
 	}
-	err = userapi.DeleteUser(username, JWT)
+	u, err := userapi.GetUser(username, jwt)
+	if err != nil {
+		return logical.ErrorResponse(err.Error()), nil
+	}
+	if u == nil {
+		return logical.ErrorResponse("user not found"), nil
+	}
+	return &logical.Response{
+		Data: map[string]interface{}{
+			"username": u.Username,
+		},
+	}, nil
+}
+
+func (b *backend) handleUserDelete(ctx context.Context, req *logical.Request, data *framework.FieldData) (*logical.Response, error) {
+	username := data.Get("username").(string)
+	if username == "" {
+		return logical.ErrorResponse("username must be provided"), nil
+	}
+	// Get the JWT from the vault storage
+	jwt, err := getJWT(ctx, req.Storage)
+	if err != nil {
+		return logical.ErrorResponse(err.Error()), nil
+	}
+	err = userapi.DeleteUser(username, jwt)
 	if err != nil {
 		return logical.ErrorResponse(err.Error()), nil
 	}

@@ -57,6 +57,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/api/v1/logs", logapi.Get).Methods("GET")
+	r.HandleFunc("/api/v1/logs", logapi.Post).Methods("POST")
 	r.HandleFunc("/api/v1/admin/signin", adminapi.Signin).Methods("POST")
 	r.HandleFunc("/api/v1/users/signin", userapi.Signin).Methods("POST")
 	r.HandleFunc("/api/v1/users", userapi.Signup).Methods("POST")

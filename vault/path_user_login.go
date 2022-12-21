@@ -2,10 +2,11 @@ package authplugin
 
 import (
 	"context"
+	"time"
+
 	"github.com/fedehsq/vault/api/user"
 	"github.com/hashicorp/vault/sdk/framework"
 	"github.com/hashicorp/vault/sdk/logical"
-	"time"
 )
 
 // Handle user login
@@ -20,6 +21,10 @@ func (b *backend) pathLogin() *framework.Path {
 			"password": {
 				Type:        framework.TypeString,
 				Description: "Password of the user",
+			},
+			"jwt": {
+				Type:        framework.TypeString,
+				Description: "JWT to be used for authentication",
 			},
 		},
 		Operations: map[logical.Operation]framework.OperationHandler{
@@ -45,12 +50,12 @@ func (b *backend) handleLogin(ctx context.Context,
 		return logical.ErrorResponse("password must be provided"), nil
 	}
 
-	// Get the JWT from the vault storage
-	JWT, err := getJWT(ctx, req.Storage)
-	if err != nil {
-		return nil, err
+	jwt := data.Get("jwt").(string)
+	if jwt == "" {
+		return logical.ErrorResponse("jwt must be provided"), nil
 	}
-	user, err := userapi.SignIn(username, password, JWT)
+
+	user, err := userapi.SignIn(username, password, jwt)
 	if err != nil {
 		return nil, err
 	}
