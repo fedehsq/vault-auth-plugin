@@ -74,6 +74,6 @@ func main() {
 	}
 	fmt.Printf("Vault server started at %s\n", config.Conf.ApiAddress)
 	// Print swagger path
-	fmt.Printf("Swagger path: %s/swagger/index.html", config.Conf.ApiAddress)
+	fmt.Printf("Swagger path: %s/swagger/index.html\n", config.Conf.ApiAddress)
 	log.Fatal(srv.ListenAndServe())
 }

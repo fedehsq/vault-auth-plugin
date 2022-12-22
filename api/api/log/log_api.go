@@ -88,7 +88,7 @@ func Get(w http.ResponseWriter, r *http.Request) {
 // @Tags         logs
 // @Param        log body log.Log true "The log to create"
 // @Produce      json
-// @Success      200  {object}   log.Log
+// @Success      201
 // @Failure      400
 // @Failure      403
 // @Router       /v1/logs/ [post]
@@ -112,7 +112,5 @@ func Post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	api.WriteLog("POST", "/v1/logs", log.Username, log.SshAddress, log.Command)
-
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 }

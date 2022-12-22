@@ -100,5 +100,10 @@ func (b *backend) createLog(ctx context.Context,
 	if err != nil {
 		return logical.ErrorResponse(err.Error()), nil
 	}
-	return nil, nil
+	// Return the status code of the operation (201)
+	return &logical.Response{
+		Data: map[string]interface{}{
+			"status": "201",
+		},
+	}, nil	
 }

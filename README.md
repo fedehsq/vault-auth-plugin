@@ -31,19 +31,25 @@ sequenceDiagram
     Note over API: JWT creation to call the other API
     API->>Vault: JWT 
     note over Vault: Vault Token creation with the plug-in policies
-    Vault->>Bastion Host: Vault Token 
+    Vault->>Bastion Host: Bastion Host Vault Token 
     note over Bastion Host: Forwards the user credentials to the API support server passing the JWT
     Bastion Host->>Vault: User Credentials
     Vault->>API: User Credentials
     note over API: JWT checks
     API->>Vault: OK
     note over Vault: Detaches a valid token for the User
-    Vault->>Bastion Host: Vault Token
+    Vault->>Bastion Host: User Vault Token
     note over Bastion Host: Uses the user Vault token to request the OTP
     Bastion Host->>Vault: Get OTP
-    note over Vault:Vault User Token checks
+    note over Vault: User Vault Token checks
     Vault->>Bastion Host: OTP
-    Bastion Host->>Target Host: Bastion host connects user to the Target Host using the OTP via Sshwifty!
+    Bastion Host->>Target Host: Bastion host connects user to the Target Host using the OTP via Sshwifty
+    User->>Target Host: 'echo "Hello World!"'
+    Bastion Host->>Vault: Create log 'echo "Hello World!"'
+    note over Vault: Bastion Host Vault Token checks
+    Vault->>API: 'echo "Hello World!"'
+    note over API: JWT checks
+    API->>Vault: Log created
 ```
 ## Technologies
 The technologies used in the project are:

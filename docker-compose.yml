@@ -61,10 +61,10 @@ services:
     environment:
       - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "xpack.security.enabled=true"
+      - "xpack.security.enabled=false"
       - "xpack.security.transport.ssl.enabled=false"
       - "ELASTIC_PASSWORD=${ELASTIC_PASSWORD}"
-    expose:
+    ports:
       - "9200:9200"
     volumes:
       - esdata:/usr/share/elasticsearch/data
@@ -80,6 +80,19 @@ services:
     depends_on:
       - postgres-db
       - elasticsearch
+  kibana:
+    container_name: kibana
+    image: 'docker.elastic.co/kibana/kibana:8.5.3'
+    ports:
+      - "5601:5601"
+    hostname: kibana
+    depends_on:
+      - elasticsearch
+    environment:
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+      ELASTIC_USERNAME: "elastic"
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      INTERACTIVESETUP_ENABLED: false
 
 volumes:
   pg_data:
