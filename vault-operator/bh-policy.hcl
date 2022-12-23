@@ -1,13 +1,9 @@
 path "auth/auth-plugin/users/*" {
-    capabilities = ["list"]
+    capabilities = ["create", "update", "delete", "read"]
 }
 
-path "auth/auth-plugin/user/*" {
-    capabilities = ["create", "update", "delete"]
-}
-
-path "auth/auth-plugin/logs/*" {
-    capabilities = ["list"]
+path "auth/auth-plugin/logs" {
+    capabilities = ["read", "create", "update", "delete"]
 }
 
 path "secret/data/bastion" {

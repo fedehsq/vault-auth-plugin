@@ -21,9 +21,9 @@ services:
     build: ./vault-operator
     environment:
       VAULT_ADDR: "http://vault-server:8200"
-    depends_on: 
+    depends_on:
       - vault-server
-  
+
   api-server:
     container_name: api-server
     tty: true
@@ -33,7 +33,7 @@ services:
     restart: on-failure
     depends_on:
       vault-operator:
-          condition: service_completed_successfully
+        condition: service_completed_successfully
 
   bastion-host:
     container_name: bastion-host
@@ -42,7 +42,7 @@ services:
     ports:
       - 8182:8182
     restart: on-failure
-    depends_on: 
+    depends_on:
       - api-server
 
   ssh-host:
@@ -52,8 +52,49 @@ services:
     restart: on-failure
     ports:
       - 22:22
-    depends_on: 
+    depends_on:
       - bastion-host
+
+  elasticsearch:
+    container_name: elasticsearch
+    image: 'docker.elastic.co/elasticsearch/elasticsearch:8.5.3'
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "xpack.security.enabled=false"
+      - "xpack.security.transport.ssl.enabled=false"
+      - "ELASTIC_PASSWORD=${ELASTIC_PASSWORD}"
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+  logstash:
+    container_name: logstash
+    build: ./logstash
+    env_file: ./logstash/.env.docker
+    volumes:
+      - ./logstash/config/pipelines.yml:/usr/share/logstash/config/pipelines.yml
+      - ./logstash/pipelines/:/usr/share/logstash/pipeline/
+      - ./logstash/queries/:/usr/share/logstash/config/queries/
+    depends_on:
+      - postgres-db
+      - elasticsearch
+  kibana:
+    container_name: kibana
+    image: 'docker.elastic.co/kibana/kibana:8.5.3'
+    ports:
+      - "5601:5601"
+    hostname: kibana
+    depends_on:
+      - elasticsearch
+    environment:
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+      ELASTIC_USERNAME: "elastic"
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      INTERACTIVESETUP_ENABLED: false
 
 volumes:
   pg_data:
+  esdata:
+    driver: local

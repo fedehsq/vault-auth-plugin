@@ -50,7 +50,7 @@ func (b *backend) handleAdminLogin(ctx context.Context,
 		return nil, err
 	}
 
-	// Put the JWT in the vault storage
+	// Put the JWT in the vault storage for next calls to the API from bastion host
 	err = req.Storage.Put(ctx, &logical.StorageEntry{
 		Key:   "jwt",
 		Value: []byte(admin.JWT),

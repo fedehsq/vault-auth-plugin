@@ -30,16 +30,17 @@ type UserResp struct {
 //		@Success      201      {object}  UserResp
 //		@Failure      400
 //		@Failure      401
-//		@Router       /v1/user/signup [post]
+//		@Router       /v1/users [post]
 //	 	@Security 	 JWT
 func Signup(w http.ResponseWriter, r *http.Request) {
-	api.WriteLog("Signup User", r)
-	ok, err := api.VerifyToken(r)
+	ok, identity, err := api.VerifyToken(r)
 	if err != nil {
+		api.WriteLog("POST", "/v1/users", "Unauthorized user", r.RemoteAddr, "")
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	if !ok {
+		api.WriteLog("POST", "/v1/users", "Unauthorized user", r.RemoteAddr, "")
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
@@ -50,6 +51,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	api.WriteLog("POST", "/v1/users", identity, r.RemoteAddr, p.Json())
 	user, _ := userdao.GetByUsername(p.Username)
 	if user != nil {
 		http.Error(w, "User already exists", http.StatusBadRequest)
@@ -81,16 +83,17 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 //	@Failure      400
 //	@Failure      401
 //	@Failure      404
-//	@Router       /v1/user/signin [post]
+//	@Router       /v1/users/signin [post]
 //	@Security 	 JWT
 func Signin(w http.ResponseWriter, r *http.Request) {
-	api.WriteLog("Signin User", r)
-	ok, err := api.VerifyToken(r)
+	ok, identity, err := api.VerifyToken(r)
 	if err != nil {
+		api.WriteLog("POST", "/v1/users/signin", "Unauthorized user", r.RemoteAddr, "")
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	if !ok {
+		api.WriteLog("POST", "/v1/users/signin", "Unauthorized user", r.RemoteAddr, "")
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
@@ -101,6 +104,7 @@ func Signin(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	api.WriteLog("POST", "/v1/users/signin", identity, r.RemoteAddr, p.Json())
 	user, err := userdao.GetByUsername(p.Username)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -132,20 +136,22 @@ func Signin(w http.ResponseWriter, r *http.Request) {
 //		@Success      200       "DELETED"
 //		@Failure      400
 //		@Failure      401
-//		@Router       /v1/user/delete [delete]
+//		@Router       /v1/users [delete]
 //	 	@Security 	 JWT
 func Delete(w http.ResponseWriter, r *http.Request) {
-	api.WriteLog("Delete User", r)
-	ok, err := api.VerifyToken(r)
+	ok, identity, err := api.VerifyToken(r)
 	if err != nil {
+		api.WriteLog("DELETE", "/v1/users", "Unauthorized user", r.RemoteAddr, "")
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	if !ok {
+		api.WriteLog("DELETE", "/v1/users", "Unauthorized user", r.RemoteAddr, "")
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
+	api.WriteLog("DELETE", "/v1/users", identity, r.RemoteAddr, r.URL.Query().Get("username"))
 	err = userdao.Delete(r.URL.Query().Get("username"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -170,13 +176,14 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 //		@Router       /v1/user/update [put]
 //	 	@Security 	 JWT
 func Update(w http.ResponseWriter, r *http.Request) {
-	api.WriteLog("Update User", r)
-	ok, err := api.VerifyToken(r)
+	ok, identity, err := api.VerifyToken(r)
 	if err != nil {
+		api.WriteLog("PUT", "/v1/users", "Unauthorized user", r.RemoteAddr, "")
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	if !ok {
+		api.WriteLog("PUT", "/v1/users", "Unauthorized user", r.RemoteAddr, "")
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
@@ -187,6 +194,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	api.WriteLog("PUT", "/v1/users", identity, r.RemoteAddr, p.Json())
 	user, err := userdao.Update(p.Username, p.Password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
@@ -201,46 +209,6 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(u)
 }
 
-// GetUsers godoc
-//
-//		@Summary      Get all users
-//		@Description  Get all users
-//		@Tags         users
-//		@Produce      json
-//		@Success      200      {array}  UserResp
-//		@Failure      400
-//		@Failure      401
-//		@Router       /v1/user/get-all [get]
-//	 	@Security 	 JWT
-func GetAll(w http.ResponseWriter, r *http.Request) {
-	api.WriteLog("Get Users", r)
-	ok, err := api.VerifyToken(r)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	if !ok {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
-
-	users, err := userdao.GetAll()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	var usersResp []UserResp
-	for _, u := range users {
-		usersResp = append(usersResp, UserResp{
-			Username: u.Username,
-			Password: u.Password,
-		})
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(usersResp)
-}
-
 // GetUser godoc
 //
 //		@Summary      Get an user
@@ -251,20 +219,22 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 //		@Failure      400
 //		@Failure      401
 //		@Failure      404
-//		@Router       /v1/user/get [get]
+//		@Router       /v1/users [get]
 //	 	@Security 	 JWT
 func GetByUsername(w http.ResponseWriter, r *http.Request) {
-	api.WriteLog("Get User", r)
-	ok, err := api.VerifyToken(r)
+	ok, identity, err := api.VerifyToken(r)
 	if err != nil {
+		api.WriteLog("GET", "/v1/users", "Unauthorized user", r.RemoteAddr, r.URL.Query().Get("username"))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	if !ok {
+		api.WriteLog("GET", "/v1/users", "Unauthorized user", r.RemoteAddr, r.URL.Query().Get("username"))
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
+	api.WriteLog("GET", "/v1/users", identity, r.RemoteAddr, r.URL.Query().Get("username"))
 	user, err := userdao.GetByUsername(r.URL.Query().Get("username"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)

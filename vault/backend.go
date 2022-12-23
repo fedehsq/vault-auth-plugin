@@ -42,7 +42,7 @@ func newBackend() (*backend, error) {
 		BackendType: logical.TypeCredential,
 		PathsSpecial: &logical.Paths{
 			Unauthenticated: []string{
-				"user/signin",
+				"users/signin",
 				"admin/signin",
 			},
 		},
@@ -51,7 +51,6 @@ func newBackend() (*backend, error) {
 			[]*framework.Path{
 				b.adminPathLogin(),
 				b.pathLogin(),
-				b.pathUsers(),
 				b.pathLogs(),
 			},
 			b.pathUser(),

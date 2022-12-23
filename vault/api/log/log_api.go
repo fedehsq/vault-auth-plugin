@@ -7,21 +7,40 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"time"
 )
 
-type Log struct {
-	Time    time.Time `json:"time"`
-	Ip      string    `json:"ip"`
-	Command string    `json:"command"`
+type ElkResponse struct {
+	Id     string  `json:"_id"`
+	Index  string  `json:"_index"`
+	Score  float64 `json:"_score"`
+	Source LogResponse     `json:"_source"`
 }
 
-func (l *Log) String() string {
-	return fmt.Sprintf("Timestamp: %s Ip: %s Command: %s", l.Time.Format(time.RFC3339), l.Ip, l.Command)
+func (e *ElkResponse) String() string {
+	return e.Source.String()
 }
 
-func GetAll(jwt string) ([]Log, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/v1/log/get-all", config.Conf.ApiAddress), strings.NewReader(string("")))
+type LogResponse struct {
+	Body           string `json:"body" example:"{username: admin, password: ********}"`
+	CallerIdentity string `json:"caller_identity" example:"admin"`
+	Ip             string `json:"ip" example:"127.0.0.1:50336"`
+	Method         string `json:"method" example:"POST"`
+	Route          string `json:"route" example:"/api/v1/admin/signin"`
+	Time           string `json:"time" example:"Tue Nov 10 23:00:00 UTC 2009"`
+}
+
+type LogRequest struct {
+	Command string `json:"command"`
+	SshAddress string `json:"ssh_address"`
+	Username string `json:"username"`
+}
+
+func (l *LogResponse) String() string {
+	return fmt.Sprintf("Body: %s, Caller identity: %s, Ip: %s, Method: %s, Route:%s, Time: %s", l.Body, l.CallerIdentity, l.Ip, l.Method, l.Route, l.Time)
+}
+
+func Get(jwt string, q string) ([]ElkResponse, error) {
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/v1/logs?q=%s", config.Conf.ApiAddress, q), strings.NewReader(string("")))
 	if err != nil {
 		return nil, err
 	}
@@ -31,13 +50,35 @@ func GetAll(jwt string) ([]Log, error) {
 		return nil, err
 	}
 
-	var logs []Log
+	var logs []ElkResponse
 	err = json.Unmarshal(body, &logs)
 	if err != nil {
 		return nil, err
 	}
 
 	return logs, nil
+}
+
+func Create(command string, sshAddress string, username string, jwt string) error {
+	log := LogRequest{
+		Command: command,
+		SshAddress: sshAddress,
+		Username: username,
+	}
+	rb, err := json.Marshal(log)
+	if err != nil {
+		return err
+	}
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/api/v1/logs", config.Conf.ApiAddress), strings.NewReader(string(rb)))
+	if err != nil {
+		return err
+	}
+
+	_, err = doRequest(req, jwt)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func doRequest(req *http.Request, jwt string) ([]byte, error) {

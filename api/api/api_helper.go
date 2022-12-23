@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/fedehsq/api/config"
-	"github.com/fedehsq/api/dao/log"
-	"github.com/fedehsq/api/models/log"
 	"io"
 	"net/http"
 	"time"
+
+	"github.com/fedehsq/api/config"
+	logdao "github.com/fedehsq/api/dao/log"
+	"github.com/fedehsq/api/models/log"
 
 	"github.com/golang-jwt/jwt"
 )
@@ -61,24 +62,25 @@ func doRequest(req *http.Request, vaultToken string) ([]byte, error) {
 	return body, err
 }
 
-func VerifyToken(r *http.Request) (bool, error) {
+func VerifyToken(r *http.Request) (bool, string, error) {
 	if r.Header["Authorization"] != nil {
 		token, err := jwt.Parse(r.Header["Authorization"][0], func(token *jwt.Token) (interface{}, error) {
 			return secretKey, nil
 		})
 		if err == nil && token.Valid {
-			return true, nil
+			claims := token.Claims.(jwt.MapClaims)
+			return true, claims["identity"].(string), nil
 		} else {
-			return false, err
+			return false, "", err
 		}
 	}
-	return false, errors.New("no token provided")
+	return false, "", errors.New("no token provided")
 }
 
-func GenerateJWT() (string, error) {
+func GenerateJWT(identity string) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
-	claims["foo"] = "bar"
+	claims["identity"] = identity
 	claims["exp"] = time.Now().Add(time.Minute * 30).Unix()
 	tokenString, err := token.SignedString(secretKey)
 	if err != nil {
@@ -87,11 +89,15 @@ func GenerateJWT() (string, error) {
 	return tokenString, nil
 }
 
-func WriteLog(command string, r *http.Request) {
+func WriteLog(method string, route string, callerIdentity string, ip string, body string) {
+	// Save time as string
 	audit := log.Log{
-		Time:    time.Now(),
-		Ip:      r.RemoteAddr,
-		Command: command,
+		Time:           time.Now().Format(time.UnixDate),
+		Ip:             ip,
+		CallerIdentity: callerIdentity,
+		Method:         method,
+		Route:          route,
+		Body:           body,
 	}
 	logdao.Insert(&audit)
 }

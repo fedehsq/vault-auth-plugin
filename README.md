@@ -31,20 +31,25 @@ sequenceDiagram
     Note over API: JWT creation to call the other API
     API->>Vault: JWT 
     note over Vault: Vault Token creation with the plug-in policies
-    Vault->>Bastion Host: Vault Token 
-    note over Bastion Host: Forwards the user credentials to the API using the Vault Token and JWT
+    Vault->>Bastion Host: Bastion Host Vault Token 
+    note over Bastion Host: Forwards the user credentials to the API support server passing the JWT
     Bastion Host->>Vault: User Credentials
-    note over Vault:Vault Token checks
     Vault->>API: User Credentials
     note over API: JWT checks
     API->>Vault: OK
     note over Vault: Detaches a valid token for the User
-    Vault->>Bastion Host: Vault Token
+    Vault->>Bastion Host: User Vault Token
     note over Bastion Host: Uses the user Vault token to request the OTP
     Bastion Host->>Vault: Get OTP
-    note over Vault:Vault User Token checks
+    note over Vault: User Vault Token checks
     Vault->>Bastion Host: OTP
-    Bastion Host->>Target Host: Bastion host connects user to the Target Host using the OTP via Sshwifty!
+    Bastion Host->>Target Host: Bastion host connects user to the Target Host using the OTP via Sshwifty
+    User->>Target Host: 'echo "Hello World!"'
+    Bastion Host->>Vault: Create log 'echo "Hello World!"'
+    note over Vault: Bastion Host Vault Token checks
+    Vault->>API: 'echo "Hello World!"'
+    note over API: JWT checks
+    API->>Vault: Log created
 ```
 ## Technologies
 The technologies used in the project are:
@@ -58,6 +63,9 @@ The technologies used in the project are:
 - [PostgreSQL](https://www.postgresql.org/) as a database
 - [Swagger](https://swagger.io/) as a REST API documentation
 - [Sshwifty](https://github.com/nirui/sshwifty) as a SSH web client, with some modifications to allow the communication with the Vault
+- [Elasticsearch](https://www.elastic.co/elasticsearch/) as a search engine for logs and analytics solution
+- [Kibana](https://www.elastic.co/kibana/) as a data visualization platform for Elasticsearch
+- [Logstash](https://www.elastic.co/logstash/) as a data collection and processing pipeline
 
 ## Auth plugin for Vault
 A crucial step in the implementation of the system is the development of an authorization plugin for Vault.  
@@ -200,12 +208,45 @@ To launch the application manually, you need to run the following commands:
     ```
     $ vault-ssh-helper -verify-only -dev -config /etc/vault-ssh-helper.d/config.hcl
     ```   
+    - Find the ipv4 address of the remote host
+    ```
+    $ ip -4 address show eth1 | grep inet | awk '{print $2}' | cut -d'/' -f1
+    ```   
     - Exit from the remote host
     ```
     $ exit
     ```
 
-7. Build and starts the web client over the bastion host
+7. (Optional) If you want to have a Log Management System, you have to install Elastic Stack on your machine.
+    - Install [Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html)
+    - Install [Kibana](https://www.elastic.co/guide/en/kibana/current/install.html)
+    - Install [Logstash](https://www.elastic.co/guide/en/logstash/current/installing-logstash.html)
+    - Copy the content of `logstash` in your Logstash installation directory
+    - Edit `logstash/pipelines/config.conf`.
+    - Edit `logstash/config/pipelines.yml`.
+    - Edit `${YOUR_ELASTIC_SEARCH}/conf/elasticsearch.yml` adding:
+        ```             
+            xpack.security.http.ssl:
+            enabled: false
+
+            xpack.security.transport.ssl:
+            enabled: false 
+        ```
+    - Edit `${YOUR_KIBANA}/conf/kibana.yml` adding:
+        ``` 
+            elasticsearch.hosts: ['http://localhost:9200']
+            type: elasticsearch, hosts: ['http://localhost:9200']]
+        ```
+
+8. Build and starts the web client over the bastion host
     ```
     $ bash sshwifty-run.sh
     ```
+
+9. (Optional) Run elasticseach, kibana and logstash if you want to have a Log Management System
+    ```
+    $ elasticsearch
+    $ kibana
+    $ logstash
+    ``` 
+ 

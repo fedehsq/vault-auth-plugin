@@ -25,7 +25,7 @@ func SignIn(username string, password string, jwt string) (*User, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/api/v1/user/signin", config.Conf.ApiAddress), strings.NewReader(string(rb)))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/api/v1/users/signin", config.Conf.ApiAddress), strings.NewReader(string(rb)))
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func SignUp(username string, password string, jwt string) (*User, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/api/v1/user/signup", config.Conf.ApiAddress), strings.NewReader(string(rb)))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/api/v1/users", config.Conf.ApiAddress), strings.NewReader(string(rb)))
 	if err != nil {
 		return nil, err
 	}
@@ -68,28 +68,8 @@ func SignUp(username string, password string, jwt string) (*User, error) {
 	return &user, nil
 }
 
-func GetUsers(jwt string) ([]User, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/v1/user/get-all", config.Conf.ApiAddress), strings.NewReader(string("")))
-	if err != nil {
-		return nil, err
-	}
-
-	body, err := doRequest(req, jwt)
-	if err != nil {
-		return nil, err
-	}
-
-	var users []User
-	err = json.Unmarshal(body, &users)
-	if err != nil {
-		return nil, err
-	}
-
-	return users, nil
-}
-
 func GetUser(username string, jwt string) (*User, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/v1/user/get?username=%s", config.Conf.ApiAddress, username), strings.NewReader(string("")))
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/v1/users?username=%s", config.Conf.ApiAddress, username), strings.NewReader(string("")))
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +86,7 @@ func GetUser(username string, jwt string) (*User, error) {
 }
 
 func DeleteUser(username string, jwt string) error {
-	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/api/v1/user/delete?username=%s", config.Conf.ApiAddress, username), strings.NewReader(string("")))
+	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/api/v1/users?username=%s", config.Conf.ApiAddress, username), strings.NewReader(string("")))
 	if err != nil {
 		return err
 	}
@@ -132,7 +112,7 @@ func UpdateUser(username string, password string, jwt string) (*User, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("PUT", fmt.Sprintf("%s/api/v1/user/update", config.Conf.ApiAddress), strings.NewReader(string(rb)))
+	req, err := http.NewRequest("PUT", fmt.Sprintf("%s/api/v1/users", config.Conf.ApiAddress), strings.NewReader(string(rb)))
 	if err != nil {
 		return nil, err
 	}
