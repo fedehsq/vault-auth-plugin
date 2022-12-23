@@ -62,6 +62,9 @@ The technologies used in the project are:
 - [PostgreSQL](https://www.postgresql.org/) as a database
 - [Swagger](https://swagger.io/) as a REST API documentation
 - [Sshwifty](https://github.com/nirui/sshwifty) as a SSH web client, with some modifications to allow the communication with the Vault
+- [Elasticsearch](https://www.elastic.co/elasticsearch/) as a search engine for logs and analytics solution
+- [Kibana](https://www.elastic.co/kibana/) as a data visualization platform for Elasticsearch
+- [Logstash](https://www.elastic.co/logstash/) as a data collection and processing pipeline
 
 ## Auth plugin for Vault
 A crucial step in the implementation of the system is the development of an authorization plugin for Vault.  
@@ -217,12 +220,11 @@ To launch the application manually, you need to run the following commands:
     - Install [Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html)
     - Install [Kibana](https://www.elastic.co/guide/en/kibana/current/install.html)
     - Install [Logstash](https://www.elastic.co/guide/en/logstash/current/installing-logstash.html)
-    - Copy `elasticsearch/logstash/config` in your Logstash installation directory and edit `logs.conf`.
-    - Edit `elasticsearch/logstash/pipelines.yml` in your Logstash installation directory and edit `pipelines.yml`.
+    - Copy the content of `logstash` in your Logstash installation directory
+    - Edit `logstash/pipelines/config.conf`.
+    - Edit `logstash/config/pipelines.yml`.
     - Edit `${YOUR_ELASTIC_SEARCH}/conf/elasticsearch.yml` adding:
-        ``` 
-            xpack.security.enabled: false
-            
+        ```             
             xpack.security.http.ssl:
             enabled: false
 
@@ -235,8 +237,15 @@ To launch the application manually, you need to run the following commands:
             type: elasticsearch, hosts: ['http://localhost:9200']]
         ```
 
-7. Build and starts the web client over the bastion host
+8. Build and starts the web client over the bastion host
     ```
     $ bash sshwifty-run.sh
     ```
+
+9. (Optional) Run elasticseach, kibana and logstash if you want to have a Log Management System
+    ```
+    $ elasticsearch
+    $ kibana
+    $ logstash
+    ``` 
  

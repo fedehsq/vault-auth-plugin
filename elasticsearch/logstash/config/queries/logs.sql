@@ -1,1 +1,0 @@
-SELECT * FROM logs WHERE id > :sql_last_value

@@ -95,6 +95,46 @@
                         "description": "Forbidden"
                     }
                 }
+            },
+            "post": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Insert a log",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "logs"
+                ],
+                "summary": "Insert a log",
+                "parameters": [
+                    {
+                        "description": "Insert a log",
+                        "name": "log",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/logapi.LogRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
             }
         },
         "/v1/users": {
@@ -356,6 +396,23 @@
                 "time": {
                     "type": "string",
                     "example": "2022-10-27 10:18:47.791249"
+                }
+            }
+        },
+        "logapi.LogRequest": {
+            "type": "object",
+            "properties": {
+                "command": {
+                    "type": "string",
+                    "example": "echo hello"
+                },
+                "ssh_address": {
+                    "type": "string",
+                    "example": "192.168.1.21"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "user"
                 }
             }
         },

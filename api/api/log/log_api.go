@@ -86,7 +86,7 @@ func Get(w http.ResponseWriter, r *http.Request) {
 // @Summary      Create log
 // @Description  Creates a new log
 // @Tags         logs
-// @Param        log body log.Log true "The log to create"
+// @Param        log body LogRequest true "The log to create"
 // @Produce      json
 // @Success      201
 // @Failure      400
