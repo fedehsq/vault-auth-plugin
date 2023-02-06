@@ -9,3 +9,11 @@ path "auth/auth-plugin/logs" {
 path "secret/data/bastion" {
     capabilities = ["read"]
 }
+
+path "auth/auth-plugin/remote-hosts" {
+    capabilities = ["read", "create", "update", "delete"]
+}
+
+path "auth/auth-plugin/remote-host-users" {
+    capabilities = ["read", "create", "update", "delete"]
+}

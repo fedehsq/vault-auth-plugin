@@ -6,6 +6,16 @@ import (
 	"github.com/fedehsq/api/models/user"
 )
 
+func Get(id int) (*user.User, error) {
+	// Query the database for the user
+	var user user.User
+	err := db.DB.QueryRow("SELECT * FROM users WHERE id = $1", id).Scan(&user.Id, &user.Username, &user.Password)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 func GetByUsername(username string) (*user.User, error) {
 	// Query the database for the user
 	var user user.User

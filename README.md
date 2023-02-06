@@ -30,25 +30,38 @@ sequenceDiagram
     Vault->>API: Bastion Host Credentials
     Note over API: JWT creation to call the other API
     API->>Vault: JWT 
+    note over Vault: Store JWT
     note over Vault: Vault Token creation with the plug-in policies
-    Vault->>Bastion Host: Bastion Host Vault Token 
-    note over Bastion Host: Forwards the user credentials to the API support server passing the JWT
-    Bastion Host->>Vault: User Credentials
-    Vault->>API: User Credentials
+    Vault->>Bastion Host: Bastion Host Vault Token, JWT
+    note over Bastion Host: Forwards Bastion Host Vault token to check if the user is authorized to access the Target Host
+    Bastion Host->> Vault: Username, Remote Ip, Bastion Host Vault Token
+    note over Vault: Check Bastion Host Vault Token
+    note over Vault: Forwards JWT
+    Vault ->> API: Username, Remote Ip, JWT
     note over API: JWT checks
-    API->>Vault: OK
+    note over API: Check(Username, Remote Ip)
+    API->>Vault: Authorized
+    Vault->>Bastion Host: Authorized
+    note over Bastion Host: Forwards the user credentials to the Vault with JWT
+    Bastion Host->>Vault: User Credentials, JWT
+    Vault->>API: User Credentials, JWT
+    note over API: JWT checks
+    note over API: Check(Username, Password)
+    API->>Vault: Valid
+    Vault->>Bastion Host: Valid
     note over Vault: Detaches a valid token for the User
     Vault->>Bastion Host: User Vault Token
     note over Bastion Host: Uses the user Vault token to request the OTP
-    Bastion Host->>Vault: Get OTP
+    Bastion Host->>Vault: Request OTP, User Vault Token
     note over Vault: User Vault Token checks
     Vault->>Bastion Host: OTP
     Bastion Host->>Target Host: Bastion host connects user to the Target Host using the OTP via Sshwifty
     User->>Target Host: 'echo "Hello World!"'
-    Bastion Host->>Vault: Create log 'echo "Hello World!"'
+    Bastion Host->>Vault: Create log 'echo "Hello World!"', Bastion Host Vault Token
     note over Vault: Bastion Host Vault Token checks
-    Vault->>API: 'echo "Hello World!"'
+    Vault->>API: 'echo "Hello World!"', JWT
     note over API: JWT checks
+    note over API: Write('echo "Hello World!"')
     API->>Vault: Log created
 ```
 ## Technologies

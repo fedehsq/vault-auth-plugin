@@ -8,9 +8,11 @@ import (
 	"time"
 
 	"github.com/fedehsq/api/api"
-	adminapi "github.com/fedehsq/api/api/admin"
-	logapi "github.com/fedehsq/api/api/log"
-	userapi "github.com/fedehsq/api/api/user"
+	"github.com/fedehsq/api/api/admin"
+	"github.com/fedehsq/api/api/log"
+	"github.com/fedehsq/api/api/user"
+	"github.com/fedehsq/api/api/remote-hosts"
+	"github.com/fedehsq/api/api/remote-host-users"
 	"github.com/fedehsq/api/config"
 	"github.com/fedehsq/api/db"
 	_ "github.com/fedehsq/api/docs"
@@ -64,6 +66,12 @@ func main() {
 	r.HandleFunc("/api/v1/users", userapi.GetByUsername).Methods("GET")
 	r.HandleFunc("/api/v1/users", userapi.Update).Methods("PUT")
 	r.HandleFunc("/api/v1/users", userapi.Delete).Methods("DELETE")
+	r.HandleFunc("/api/v1/remote-hosts", remotehostsapi.CreateRemoteHost).Methods("POST")
+	r.HandleFunc("/api/v1/remote-hosts", remotehostsapi.GetByIp).Methods("GET")
+	r.HandleFunc("/api/v1/remote-hosts", remotehostsapi.Delete).Methods("DELETE")
+	r.HandleFunc("/api/v1/remote-host-users", remotehostusersapi.Create).Methods("POST")
+	r.HandleFunc("/api/v1/remote-host-users", remotehostusersapi.GetOrGetAll).Methods("GET")
+	r.HandleFunc("/api/v1/remote-host-users", remotehostusersapi.Delete).Methods("DELETE")
 	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 	handler := cors.AllowAll().Handler(r)
 	srv := &http.Server{

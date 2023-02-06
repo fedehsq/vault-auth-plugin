@@ -18,6 +18,265 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/v1/remote-host-users": {
+            "post": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Authorize a user to access a remote host",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "remote-host-users"
+                ],
+                "summary": "Authorize a user to access a remote host",
+                "parameters": [
+                    {
+                        "description": "Remote host ip",
+                        "name": "remote_host",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/remotehostsapi.RemoteHostReq"
+                        }
+                    },
+                    {
+                        "description": "Username",
+                        "name": "username",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/remotehostusersapi.RemoteHostUsersReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/remotehostusersapi.RemoteHostUsersResp"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                }
+            },
+            "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Check if a user is authorized to access a remote host if username is provided, otherwise get all users for a remote host",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "remote-host-users"
+                ],
+                "summary": "Check if a user is authorized to access a remote host if username is provided, otherwise get all users for a remote host",
+                "parameters": [
+                    {
+                        "description": "Remote host ip",
+                        "name": "remote_host",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/remotehostsapi.RemoteHostReq"
+                        }
+                    },
+                    {
+                        "description": "Username",
+                        "name": "username",
+                        "in": "body",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/definitions/remotehostusersapi.RemoteHostUsersReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/remotehostusersapi.RemoteHostUsersResp"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Delete a user from a remote host",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "remote-host-users"
+                ],
+                "summary": "Delete a user from a remote host",
+                "parameters": [
+                    {
+                        "description": "Remote host ip",
+                        "name": "remote_host",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/remotehostsapi.RemoteHostReq"
+                        }
+                    },
+                    {
+                        "description": "Username",
+                        "name": "username",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/remotehostusersapi.RemoteHostUsersReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "DELETED",
+                    }
+                }
+            }
+        },
+        "/v1/remote-hosts": {
+            "security": [
+                {
+                    "JWT": []
+                }
+            ],
+            "post": {
+                "description": " Create a remote host",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "remote-hosts"
+                ],
+                "summary": " Create a remote host",
+                "parameters": [
+                    {
+                        "description": " Create a remote host",
+                        "name": "remote_host",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/remotehostsapi.RemoteHostReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/remotehostsapi.RemoteHostReq"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                }
+            },
+            "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": " Get the remote hosts",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "remote-hosts"
+                ],
+                "summary": " Get the remote hosts",
+                "parameters": [
+                    {
+                        "description": " Get the remote host",
+                        "name": "remote_host",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/remotehostsapi.RemoteHostReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/remotehostsapi.RemoteHostReq"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": " Delete a remote host",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "remote-hosts"
+                ],
+                "summary": " Delete a remote host",
+                "parameters": [
+                    {
+                        "description": " Delete a remote host",
+                        "name": "remote_host",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/remotehostsapi.RemoteHostReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "DELETED",
+                    }
+                }
+            }
+        },
         "/v1/admin/signin": {
             "post": {
                 "description": "Signin an admin passing username and password in json",
@@ -448,7 +707,38 @@ const docTemplate = `{
                     "example": "user"
                 }
             }
-        }
+        },
+        "remotehostsapi.RemoteHostReq": {
+            "type": "object",
+            "properties": {
+                "ip": {
+                    "type": "string",
+                    "example": "192.176.2.44"
+                },
+            }
+        },
+        "remotehostusersapi.RemoteHostUsersReq": {
+            "type": "object",
+            "properties": {
+                "username": {
+                    "type": "string",
+                    "example": "elliot"
+                },
+            }
+        },
+        "remotehostusersapi.RemoteHostUsersResp": {
+            "type": "object",
+            "properties": {
+                "ip": {
+                    "type": "string",
+                    "example": "192.168.1.22"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "elliot"
+                },
+            }
+        },
     },
     "securityDefinitions": {
         "JWT": {
